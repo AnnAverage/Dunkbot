@@ -3,3 +3,4 @@ bot/bot
 app/settings.py
 *.db
 .DS_Store
+airhornbot

@@ -1,0 +1,5 @@
+bot/bot
+*.pyc
+app/settings.py
+*.db
+.DS_Store

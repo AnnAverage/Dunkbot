@@ -122,7 +122,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 func server() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/login", handleLogin)
-	http.HandleFunc("/discord_oauth_cb", handleLogin)
+	http.HandleFunc("/discord_oauth_cb", handleCallback)
 	http.HandleFunc("/ws", handleWebsocket)
 
 	http.ListenAndServe(":14000", nil)

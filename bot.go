@@ -211,14 +211,13 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 }
 
 func playSound(play *Play, vc *discordgo.VoiceConnection) {
-	var err error
-
-	delay := 0
+	var (
+		err   error
+		delay int = 0
+	)
 
 	log.WithFields(log.Fields{
-		"channel": play.ChannelID,
-		"sound":   play.Sound.Name,
-		"delay":   delay,
+		"play": play,
 	}).Info("Playing sound")
 
 	if vc == nil {
@@ -227,7 +226,7 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 			delay = randomRange(2000, 8000)
 		}
 
-		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
+		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false, 5000)
 		vc.Receive = false
 		if err != nil {
 			log.WithFields(log.Fields{
@@ -235,7 +234,15 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 			}).Error("Failed to play sound")
 		}
 
-		vc.WaitUntilConnected()
+		err = vc.WaitUntilConnected()
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err,
+				"play":  play,
+			}).Error("Failed to join voice channel")
+			vc.Close()
+			return
+		}
 	}
 
 	if vc.ChannelID != play.ChannelID {

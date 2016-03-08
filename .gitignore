@@ -4,3 +4,4 @@ app/settings.py
 *.db
 .DS_Store
 airhornbot
+airhornweb

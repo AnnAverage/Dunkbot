@@ -22,44 +22,50 @@ var rcli *redis.Client
 type Play struct {
 	GuildID   string
 	ChannelID string
+	UserID    string
 	Sound     *Sound
 }
 
 var queues map[string]chan *Play = make(map[string]chan *Play)
 
 type Sound struct {
-	Name   string
-	Weight int
+	Name      string
+	Weight    int
+	PartDelay int
 
 	encodeChan chan []int16
 	buffer     [][]byte
 }
 
-func createSound(Name string, Weight int) *Sound {
+func createSound(Name string, Weight int, PartDelay int) *Sound {
 	return &Sound{
 		Name:       Name,
 		Weight:     Weight,
+		PartDelay:  PartDelay,
 		encodeChan: make(chan []int16, 10),
 		buffer:     make([][]byte, 0),
 	}
 }
 
 var SOUNDS []*Sound = []*Sound{
-	createSound("airhorn1", 1000),
-	createSound("airhorn_reverb", 800),
-	createSound("airhorn_spam", 800),
-	createSound("airhorn_tripletap", 800),
-	createSound("airhorn_fourtap", 800),
-	createSound("airhorn_distant", 500),
-	createSound("airhorn_echo", 500),
-	createSound("airhorn_highfartlong", 200),
-	createSound("airhorn_highfartshort", 200),
-	createSound("airhorn_midshort", 100),
-	createSound("airhorn_truck", 10),
+	createSound("airhorn1", 1000, 250),
+	createSound("airhorn_reverb", 800, 250),
+	createSound("airhorn_spam", 800, 0),
+	createSound("airhorn_tripletap", 800, 250),
+	createSound("airhorn_fourtap", 800, 250),
+	createSound("airhorn_distant", 500, 250),
+	createSound("airhorn_echo", 500, 250),
+	createSound("airhorn_clownfull", 250, 250),
+	createSound("airhorn_clownshort", 250, 250),
+	createSound("airhorn_clownspam", 250, 0),
+	createSound("airhorn_highfartlong", 200, 250),
+	createSound("airhorn_highfartshort", 200, 250),
+	createSound("airhorn_midshort", 100, 250),
+	createSound("airhorn_truck", 10, 250),
 }
 
 var (
-	SOUND_RANGE    = 5701
+	SOUND_RANGE    = 0
 	BITRATE        = 128
 	MAX_QUEUE_SIZE = 6
 )
@@ -217,8 +223,8 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 
 	if vc == nil {
 		// Only calculate delay if its the first time joining the channel
-		if randomRange(1, 10) == 5 {
-			delay = randomRange(1000, 5000)
+		if randomRange(1, 25) == 5 {
+			delay = randomRange(2000, 8000)
 		}
 
 		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
@@ -240,9 +246,10 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 	time.Sleep(time.Millisecond * time.Duration(delay))
 	_, err = rcli.Pipelined(func(pipe *redis.Pipeline) error {
 		pipe.Incr("airhorn:total")
-		pipe.Incr(fmt.Sprintf("airhorn:sound:%s:total", play.Sound.Name))
-		pipe.Incr(fmt.Sprintf("airhorn:guild:%s:total", play.GuildID))
-		pipe.Incr(fmt.Sprintf("airhorn:guild:%s:chan:%s:total", play.GuildID, play.ChannelID))
+		pipe.Incr(fmt.Sprintf("airhorn:sound:%s", play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("airhorn:user:%s:sound:%s", play.UserID, play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("airhorn:guild:%s:sound:%s", play.GuildID, play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("airhorn:guild:%s:chan:%s:sound:%s", play.GuildID, play.ChannelID, play.Sound.Name))
 		return nil
 	})
 
@@ -257,9 +264,10 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 	if len(queues[play.GuildID]) > 0 {
 		play := <-queues[play.GuildID]
 		playSound(play, vc)
+		return
 	}
 
-	time.Sleep(time.Millisecond * 350)
+	time.Sleep(time.Millisecond * time.Duration(play.Sound.PartDelay))
 	delete(queues, play.GuildID)
 	vc.Close()
 }
@@ -287,7 +295,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 		}
 
-		rcli.Incr("airhorn:cmd:total")
 		go enqueuePlay(m.Author, guild, sound)
 	}
 }
@@ -302,6 +309,7 @@ func main() {
 
 	log.Info("Preloading sounds...")
 	for _, sound := range SOUNDS {
+		SOUND_RANGE += sound.Weight
 		sound.Load()
 	}
 

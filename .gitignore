@@ -5,3 +5,5 @@ app/settings.py
 .DS_Store
 airhornbot
 airhornweb
+
+node_modules

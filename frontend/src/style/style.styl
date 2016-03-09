@@ -1,0 +1,155 @@
+body {
+  font-family: roboto
+  display: flex
+  padding: 0
+  margin: 0
+  overflow: hidden
+}
+
+#app {
+  display: flex;
+  flex: 1
+  flex-direction: column
+  justify-content: center
+  align-items: center
+
+  .container {
+    position: relative;
+  }
+}
+
+.content {
+  display: flex
+  flex-flow: column
+  align-items: center
+  
+  .title {
+    color: #222222
+    font-size: 64px
+    line-height: 68px
+    margin: 0
+  }
+  
+  .message {
+    color: #5E4634
+    
+    a {
+      color: #5E4634
+    }
+  }
+}
+
+.footer {
+  position: fixed
+  bottom: 0
+  left: 0
+  right: 0
+  display: flex
+  justify-content: center
+  background-color: white
+  opacity: 0.8
+  padding: 28px
+  color: #5E4634
+  font-size: 18px
+  line-height: 24px
+  box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, .1)
+  
+  a {
+    color: #5E4634
+  }
+}
+
+.island:not(.mid) {
+  position: absolute
+  z-index: -1
+  
+  &.pond {
+    top: -120px
+    left: -208px
+  }
+  
+  &.tree-left {
+    top: 400px
+    left: -400px
+  }
+
+  &.tree-right {
+    left: 1056px
+    top: -56px
+  }
+  
+  &.tent {
+    left: 896px
+    top: 536px
+  }
+}
+
+.add-btn {
+  background: #FFFFFF
+  border: 2px dashed #5E4634
+  border-radius: 30px
+  width: 240px
+  height: 50px
+  text-align: center
+  font-family: Roboto-Bold
+  font-size: 18px
+  color: #FF7555
+  line-height: 48px
+  text-transform: uppercase
+  transition: all 100ms ease-in-out
+  cursor: pointer
+  text-decoration: none
+  display: block
+  
+  &:hover {
+    color: white
+    background-color: #5E4634
+    border: 2px solid #5E4634
+  }
+}
+
+.island, .leaves, .lines, .stretch, .small-island {
+  animation-duration: 1500ms
+  animation-name: float
+  animation-iteration-count: infinite
+  animation-timing-function: ease-in-out
+  animation-direction: alternate
+  animation-play-state: running
+  overflow: visible
+}
+
+.leaves {
+  width: 500px
+  animation-delay: 340ms
+}
+
+.lines {
+  animation-delay: 100ms
+}
+
+.stretch {
+  animation-name: stretch;
+  animation-delay: 140ms
+}
+
+.small-island {
+  animation-duration: 2000ms
+}
+
+@keyframes stretch {
+  from {
+    transform: translateY(0px)
+  }
+  to {
+    transform: translateY(2px)
+  }
+}
+
+@keyframes float {
+  from {
+    transform: translateY(4px)
+  }
+  to {
+     transform: translateY(-4px)
+  }
+}

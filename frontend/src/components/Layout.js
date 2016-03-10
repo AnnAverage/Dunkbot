@@ -4,6 +4,7 @@ import IslandPond from './IslandPond';
 import IslandTree from './IslandTree';
 import IslandTrees from './IslandTrees';
 import IslandTent from './IslandTent';
+import AirhornCountStore from '../stores/AirhornCountStore';
 import Constants from '../Constants';
 
 import '../style/style.styl';
@@ -34,6 +35,11 @@ const IslandSmall = ({number}) => (
 );
 
 const Layout = React.createClass({
+
+  componentWillMount() {
+    AirhornCountStore.on('change', this.updateCount);
+  },
+
   playVideo() {
     document.getElementById('video-airhorn').play();
     setTimeout(this.startOAuth, 1500);
@@ -41,6 +47,15 @@ const Layout = React.createClass({
 
   startOAuth() {
     console.log('starting OAuth flow');
+    //window.location = '/login';
+  },
+
+  updateCount() {
+    this.setState({
+      count: AddCountStore.getCount()
+    });
+
+    console.log(this.state.count);
   },
 
   render() {

@@ -241,6 +241,7 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 				"play":  play,
 			}).Error("Failed to join voice channel")
 			vc.Close()
+			delete(queues, play.GuildID)
 			return
 		}
 	}

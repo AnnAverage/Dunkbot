@@ -1,6 +1,7 @@
 export default {
-  gitHubUrl: 'https://github.com/hammerandchisel/airhornbot',
-  discordUrl: 'https://discordapp.com',
+  GITHUB_URL: 'https://github.com/hammerandchisel/airhornbot',
+  DISCORD_URL: 'https://discordapp.com',
+  SMALL_ISLAND_COUNT: 12,
 
   Image: {
     ISLAND_AIRHORN: require('./images/island-airhorn.svg'),

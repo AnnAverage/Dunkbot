@@ -17,8 +17,8 @@ import '../style/style.styl';
 const Footer = () => (
   <div className="footer">
     <div className="text">
-      Some text will go  here about how you can do something on <a href={Constants.gitHubUrl}>GitHub</a>
-      <a href={Constants.gitHubUrl} className="arrow"> ➔</a>
+      Some text will go  here about how you can do something on <a href={Constants.GITHUB_URL}>GitHub</a>
+      <a href={Constants.GITHUB_URL} className="arrow"> ➔</a>
     </div>
   </div>
 );
@@ -26,7 +26,7 @@ const Footer = () => (
 const Content = ({addBtnClick}) => (
   <div className="content">
     <h1 className="title">!airhorn</h1>
-    <p className="message">The only bot for <a href={Constants.discordUrl}>Discord</a> you'll ever want</p>
+    <p className="message">The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want</p>
     <video preload className="video-airhorn" id="video-airhorn">
       <source src={Constants.Video.AIRHORN_OGV} type="video/ogv" />
       <source src={Constants.Video.AIRHORN_MP4} type="video/mp4" />
@@ -38,6 +38,11 @@ const Content = ({addBtnClick}) => (
 const Layout = React.createClass({
 
   componentWillMount() {
+    this.smallIslandTypes = [];
+    for (let i=0; i<Constants.SMALL_ISLAND_COUNT; i++) {
+      this.smallIslandTypes.push(Math.floor((Math.random() * 6) + 1));
+    }
+
     AirhornCountStore.on('change', this.updateCount);
   },
 
@@ -60,10 +65,9 @@ const Layout = React.createClass({
   },
 
   render() {
-
     let smallIslands = [];
-    for (let i=1; i<=12; i++) {
-      let type = Math.floor((Math.random() * 6) + 1);
+    for (let i=1; i<=Constants.SMALL_ISLAND_COUNT; i++) {
+      let type = this.smallIslandTypes[i - 1];
       smallIslands.push(<IslandSmall number={i} key={i} type={type} />)
     }
 

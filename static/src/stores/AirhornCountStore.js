@@ -5,6 +5,14 @@ class AirhornCountStore extends EventEmitter {
   constructor() {
     super();
     this.count = 0;
+    
+    //this.ws = new WebSocket('...');
+    //this.ws.onmessage = this.recievedMessage.bind(this);
+  }
+
+  recievedMessage(event) {
+    // this.count = ...
+    this.emit('change');
   }
 
   getCount() {

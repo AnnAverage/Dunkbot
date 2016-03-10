@@ -6,4 +6,5 @@ app/settings.py
 airhornbot
 airhornweb
 
+dist
 node_modules

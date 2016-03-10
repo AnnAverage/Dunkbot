@@ -38,7 +38,7 @@ function getWebpackOptions() {
             presets: ['es2015', 'react']
           }
         },
-        {test: /\.(png|svg)$/, loader: 'file'}
+        {test: /\.(png|svg|ogv|mp4)$/, loader: 'file'}
       ]
     },
     stylus: {

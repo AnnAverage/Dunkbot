@@ -17,12 +17,15 @@ const Footer = () => (
   </div>
 );
 
-const Content = () => (
+const Content = ({addBtnClick}) => (
   <div className="content">
     <h1 className="title">!airhorn</h1>
-    <p className="message">The only bot for <a href="https://discordapp.com">Discord</a> you'll ever want</p>
-    <img src={Constants.Image.ISLAND_AIRHORN} />
-    <a className="add-btn" href="/login">Add to Discord</a>
+    <p className="message">The only bot for <a href={Constants.discordUrl}>Discord</a> you'll ever want</p>
+    <video preload className="video-airhorn" id="video-airhorn">
+      <source src={Constants.Video.AIRHORN_OGV} type="video/ogv" />
+      <source src={Constants.Video.AIRHORN_MP4} type="video/mp4" />
+    </video>
+    <a className="add-btn" onClick={addBtnClick}>Add to Discord</a>
   </div>
 );
 
@@ -31,30 +34,31 @@ const IslandSmall = ({number}) => (
 );
 
 const Layout = React.createClass({
+  playVideo() {
+    document.getElementById('video-airhorn').play();
+    setTimeout(this.startOAuth, 1500);
+  },
+
+  startOAuth() {
+    console.log('starting OAuth flow');
+  },
+
   render() {
+
+    let smallIslands = [];
+    for (let i=1; i<=12; i++) {
+      smallIslands.push(<IslandSmall number={i} key={i} />)
+    }
+
     return (
       <div className="container">
-        <Content />
+        <Content addBtnClick={this.playVideo} />
         <IslandPond />
         <IslandTree />
         <IslandTrees />
         <IslandTent />
 
-        <IslandSmall number="1" />
-        <IslandSmall number="2" />
-        <IslandSmall number="3" />
-        <IslandSmall number="4" />
-        <IslandSmall number="5" />
-        <IslandSmall number="6" />
-
-        <IslandSmall number="7" />
-        <IslandSmall number="8" />
-        <IslandSmall number="9" />
-
-        <IslandSmall number="10" />
-        <IslandSmall number="11" />
-        <IslandSmall number="12" />
-        <IslandSmall number="13" />
+        {smallIslands}
 
         <Cloud type={1} number="1" />
         <Cloud type={2} number="2" />

@@ -6,6 +6,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const path = require('path');
 const fs = require('fs');
 const del = require('del');
+const nib = require('nib');
 
 gulp.task('default', ['dev']);
 
@@ -39,6 +40,10 @@ function getWebpackOptions() {
         },
         {test: /\.(png|svg)$/, loader: 'file'}
       ]
+    },
+    stylus: {
+      use: [nib()],
+      import: ['~nib/lib/nib/index.styl']
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),

@@ -1,10 +1,15 @@
 import React from 'react';
+import AirhornCountStore from '../stores/AirhornCountStore';
 import Cloud from './Cloud';
 import IslandPond from './IslandPond';
 import IslandTree from './IslandTree';
 import IslandTrees from './IslandTrees';
 import IslandTent from './IslandTent';
-import AirhornCountStore from '../stores/AirhornCountStore';
+import IslandDoubleTree from './IslandDoubleTree';
+import IslandForest from './IslandForest';
+import IslandLog from './IslandLog';
+import IslandShrooms from './IslandShrooms';
+import IslandSmall from './IslandSmall';
 import Constants from '../Constants';
 
 import '../style/style.styl';
@@ -28,10 +33,6 @@ const Content = ({addBtnClick}) => (
     </video>
     <a className="add-btn" onClick={addBtnClick}>Add to Discord</a>
   </div>
-);
-
-const IslandSmall = ({number}) => (
-  <img className={`island small-island small-${number}`} src={Constants.Image.ISLAND_SMALL} />
 );
 
 const Layout = React.createClass({
@@ -62,7 +63,8 @@ const Layout = React.createClass({
 
     let smallIslands = [];
     for (let i=1; i<=12; i++) {
-      smallIslands.push(<IslandSmall number={i} key={i} />)
+      let type = Math.floor((Math.random() * 6) + 1);
+      smallIslands.push(<IslandSmall number={i} key={i} type={type} />)
     }
 
     return (
@@ -72,6 +74,10 @@ const Layout = React.createClass({
         <IslandTree />
         <IslandTrees />
         <IslandTent />
+        <IslandDoubleTree />
+        <IslandForest />
+        <IslandLog />
+        <IslandShrooms />
 
         {smallIslands}
 

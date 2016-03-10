@@ -56,7 +56,7 @@ body {
   display: flex
   justify-content: center
   background-color: white
-  opacity: 0.8
+  opacity: 0.98
   padding: 28px
   font-size: 18px
   line-height: 24px
@@ -71,7 +71,7 @@ body {
   }
 }
 
-.island:not(.mid) {
+.island {
   position: absolute
   z-index: -1
   
@@ -93,6 +93,26 @@ body {
   &.tent {
     left: 672px
     top: 446px
+  }
+  
+  &.double-tree {
+    left: -1070px
+    top: 170px
+  }
+  
+  &.forest {
+    left: 270px
+    top: -530px
+  }
+  
+  &.log {
+    left: 1494px
+    top: -320px
+  }
+  
+  &.shrooms {
+    left: 1280px
+    top: 700px
   }
   
   &.small-island {
@@ -171,6 +191,7 @@ body {
   left: 0
   top: 0
   transform: scale(2)
+  opacity: 0.8
 
   &.cloud-1 {
     left: -304px
@@ -276,7 +297,7 @@ body {
   text-align: center
   font-size: 18px
   color: color-orange
-  line-height: 48px
+  line-height: 50px
   text-transform: uppercase
   transition: all 100ms ease-in-out
   cursor: pointer

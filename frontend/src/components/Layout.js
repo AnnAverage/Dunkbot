@@ -44,17 +44,26 @@ const Layout = React.createClass({
         <IslandSmall number="2" />
         <IslandSmall number="3" />
         <IslandSmall number="4" />
-
         <IslandSmall number="5" />
-        <IslandSmall number="7" />
+        <IslandSmall number="6" />
 
+        <IslandSmall number="7" />
         <IslandSmall number="8" />
         <IslandSmall number="9" />
+
+        <IslandSmall number="10" />
+        <IslandSmall number="11" />
+        <IslandSmall number="12" />
+        <IslandSmall number="13" />
 
         <Cloud type={1} number="1" />
         <Cloud type={2} number="2" />
         <Cloud type={3} number="3" />
         <Cloud type={4} number="4" />
+        <Cloud type={3} number="5" />
+        <Cloud type={1} number="6" />
+        <Cloud type={2} number="7" />
+        <Cloud type={4} number="8" />
 
         <Cloud type={1} number="1" small />
         <Cloud type={2} number="2" small />

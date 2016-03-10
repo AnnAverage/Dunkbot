@@ -1,3 +1,7 @@
+color-brown = #5E4634
+color-orange = #FF7555
+color-gray = #222222
+
 body {
   font-family: roboto
   display: flex
@@ -26,20 +30,20 @@ body {
   align-items: center
   
   .title {
-    color: #222222
+    color: color-gray
     font-size: 64px
     line-height: 68px
     margin: 0
   }
   
   .message {
-    color: #5E4634
+    color: color-brown
     font-size: 15px
     line-height: 24px
     opacity: 0.6
     
     a {
-      color: #5E4634
+      color: color-brown
     }
   }
 }
@@ -59,7 +63,7 @@ body {
   box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, .1)
   
   .text, a {
-    color: #5E4634
+    color: color-brown
   }
   
   .arrow {
@@ -72,23 +76,23 @@ body {
   z-index: -1
   
   &.pond {
-    top: -304px
-    left: -404px
+    left: -444px
+    top: -164px
   }
   
   &.tree {
+    left: -300px
     top: 400px
-    left: -500px
   }
 
   &.trees {
-    left: 1056px
-    top: -56px
+    left: 876px
+    top: -116px
   }
   
   &.tent {
-    left: 692px
-    top: 536px
+    left: 672px
+    top: 446px
   }
   
   &.small-island {
@@ -117,32 +121,52 @@ body {
     left: 36px
     top: 540px
   }
+
+  &.small-5 {
+    left: 390px
+    top: 785px
+  }
+
+  &.small-6 {
+    left: 190px
+    top: -370px
+  }
   
   // Left side
-  &.small-5 {
+  &.small-7 {
     left: -800px
     top: 440px
   }
   
-  &.small-6 {
-    left: -456px
+  &.small-8 {
+    left: -576px
     top: 120px
   }
   
-  &.small-7 {
+  &.small-9 {
     left: -880px
-    top: -128px
+    top: -268px
   }
   
   // Right side
-  &.small-8 {
+  &.small-10 {
     left: 1400px
     top: 600px
   }
   
-  &.small-9 {
+  &.small-11 {
     left: 1000px
     top: 320px
+  }
+  
+  &.small-12 {
+    left: 1570px
+    top: 150px
+  }
+  
+  &.small-13 {
+    left: 1390px
+    top: -440px
   }
 }
 
@@ -159,7 +183,7 @@ body {
   }
   
   &.cloud-2 {
-    left: -280px
+    left: -400px
     top: 400px
   }
   
@@ -170,7 +194,27 @@ body {
   
   &.cloud-4 {
     left: 784px
-    top: 504px    
+    top: 504px
+  }
+  
+  &.cloud-5 {
+    left: -790px
+    top: -20px
+  }
+  
+  &.cloud-6 {
+    left: 690px
+    top: -440px
+  }
+  
+  &.cloud-7 {
+    left: 1520px
+    top: 360px
+  }
+  
+  &.cloud-8 {
+    left: -820px
+    top: 765px
   }
 
   &.small {
@@ -229,15 +273,14 @@ body {
 }
 
 .add-btn {
-  background: #FFFFFF
-  border: 2px dashed #5E4634
+  background: white
+  border: 2px dashed color-brown
   border-radius: 30px
   width: 240px
   height: 50px
   text-align: center
-  font-family: Roboto-Bold
   font-size: 18px
-  color: #FF7555
+  color: color-orange
   line-height: 48px
   text-transform: uppercase
   transition: all 100ms ease-in-out
@@ -247,8 +290,8 @@ body {
   
   &:hover {
     color: white
-    background-color: #5E4634
-    border: 2px solid #5E4634
+    background-color: color-brown
+    border: 2px solid color-brown
   }
 }
 
@@ -272,7 +315,7 @@ body {
 }
 
 .stretch {
-  animation-name: stretch;
+  animation-name: stretch
   animation-delay: 140ms
 }
 

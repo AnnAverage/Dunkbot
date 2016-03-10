@@ -19,6 +19,8 @@ body {
 }
 
 .content {
+  top: -64px
+  position: relative
   display: flex
   flex-flow: column
   align-items: center
@@ -71,22 +73,158 @@ body {
   
   &.pond {
     top: -304px
-    left: -304px
+    left: -404px
   }
   
-  &.tree-left {
+  &.tree {
     top: 400px
-    left: -400px
+    left: -500px
   }
 
-  &.tree-right {
+  &.trees {
     left: 1056px
     top: -56px
   }
   
   &.tent {
-    left: 632px
+    left: 692px
     top: 536px
+  }
+  
+  &.small-island {
+    z-index: -2
+    height: 82px
+    width: 102px
+  }
+  
+  // Center
+  &.small-1 {
+    left: 732px
+    top: -96px
+  }
+  
+  &.small-2 {
+    left: -120px
+    top: -64px
+  }
+  
+  &.small-3 {
+    left: 120px
+    top: 64px
+  }
+  
+  &.small-4 {
+    left: 36px
+    top: 540px
+  }
+  
+  // Left side
+  &.small-5 {
+    left: -800px
+    top: 440px
+  }
+  
+  &.small-6 {
+    left: -456px
+    top: 120px
+  }
+  
+  &.small-7 {
+    left: -880px
+    top: -128px
+  }
+  
+  // Right side
+  &.small-8 {
+    left: 1400px
+    top: 600px
+  }
+  
+  &.small-9 {
+    left: 1000px
+    top: 320px
+  }
+}
+
+.cloud {
+  z-index: -3
+  position: absolute
+  left: 0
+  top: 0
+  transform: scale(2)
+
+  &.cloud-1 {
+    left: -304px
+    top: -256px
+  }
+  
+  &.cloud-2 {
+    left: -280px
+    top: 400px
+  }
+  
+  &.cloud-3 {
+    left: 1056px
+    top: -56px
+  }
+  
+  &.cloud-4 {
+    left: 784px
+    top: 504px    
+  }
+
+  &.small {
+    display: none
+    z-index: -4
+    transform: scale(0.5)
+      
+    // center
+    &.cloud-1 {
+      left: 732px
+      top: -96px
+    }
+    
+    &.cloud-2 {
+      left: -120px
+      top: -64px
+    }
+    
+    &.cloud-3 {
+      left: 120px
+      top: 64px
+    }
+    
+    &.cloud-4 {
+      left: -24px
+      top: 480px
+    }
+    
+    // Left side
+    &.cloud-5 {
+      left: -800px
+      top: 440px
+    }
+    
+    &.cloud-6 {
+      left: -456px
+      top: 120px
+    }
+    
+    &.cloud-7 {
+      left: -880px
+      top: -128px
+    }
+    
+    // Right side
+    &.cloud-8 {
+      left: 1400px
+      top: 600px
+    }
+    
+    &.cloud-9 {
+      left: 1000px
+      top: 320px
+    }
   }
 }
 

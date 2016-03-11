@@ -24,8 +24,9 @@ const Footer = ({count}) => (
       </div>
     </div>
     <div className="main-text">
-      Some text will go  here about how you can do something on <a href={Constants.GITHUB_URL}>GitHub</a>
-      <a href={Constants.GITHUB_URL} className="arrow"> ➔</a>
+      Some text will go  here about how you can do something on&nbsp;
+      <a href={Constants.GITHUB_URL}>GitHub</a>
+      <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
     </div>
   </div>
 );
@@ -35,7 +36,6 @@ const Content = ({addBtnClick}) => (
     <h1 className="title">!airhorn</h1>
     <p className="message">The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want</p>
     <video preload className="video-airhorn" id="video-airhorn">
-      <source src={Constants.Video.AIRHORN_OGV} type="video/ogv" />
       <source src={Constants.Video.AIRHORN_MP4} type="video/mp4" />
     </video>
     <a className="add-btn" onClick={addBtnClick}>Add to Discord</a>

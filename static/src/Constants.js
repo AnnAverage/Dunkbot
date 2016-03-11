@@ -15,7 +15,6 @@ export default {
   },
 
   Video: {
-    AIRHORN_OGV: require('./videos/airhorn.ogv'),
     AIRHORN_MP4: require('./videos/airhorn.mp4')
   }
 };

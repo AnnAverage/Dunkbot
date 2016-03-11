@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default ({type, number}) => {
-  let depth = "1.0";
+  let depth = "0.5";
   let className = `cloud cloud-${number} layer`;
 
   if (type == 1) {

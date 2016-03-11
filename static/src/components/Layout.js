@@ -37,8 +37,9 @@ const Content = ({addBtnClick}) => (
     <h1 className="title">!airhorn</h1>
     <p className="message">The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want</p>
     <video preload className="video-airhorn" id="video-airhorn">
-      <source src={Constants.Video.AIRHORN_MP4} type="video/mp4" />
+      <source src={Constants.Video.AIRHORN} type="video/mp4" />
     </video>
+    <audio src={Constants.Audio.AIRHORN} type="audio/wav" id="audio-airhorn" />
     <a className="add-btn" onClick={addBtnClick}>Add to Discord</a>
   </div>
 );
@@ -61,13 +62,13 @@ const Layout = React.createClass({
   },
 
   componentDidMount() {
-    let scene = document.getElementById('scene');
-    console.log(Parallax);
+    let scene = document.getElementById('parallax');
     new Parallax(scene);
   },
 
   playVideo() {
     document.getElementById('video-airhorn').play();
+    document.getElementById('audio-airhorn').play();
     setTimeout(this.startOAuth, 1500);
   },
 
@@ -108,15 +109,15 @@ const Layout = React.createClass({
 
         {smallIslands}
 
-        <div id="parallax" style={{display: 'absolute', width: '100%', height: '100%', top: 0, left: 0}}>
-          <Cloud type={1} number="1" left="-304" top="-256" />
-          <Cloud type={2} number="2" left="-400" top="400" />
-          <Cloud type={3} number="3" left="1056" top="-56" />
-          <Cloud type={4} number="4" left="784" top="504" />
-          <Cloud type={3} number="5" left="-790" top="-20" />
-          <Cloud type={1} number="6" left="-690" top="-440" />
-          <Cloud type={2} number="7" left="1520" top="360" />
-          <Cloud type={4} number="8" left="-820" top="765" />
+        <div id="parallax">
+          <Cloud type={1} number="1" />
+          <Cloud type={2} number="2" />
+          <Cloud type={3} number="3" />
+          <Cloud type={4} number="4" />
+          <Cloud type={3} number="5" />
+          <Cloud type={1} number="6" />
+          <Cloud type={2} number="7" />
+          <Cloud type={4} number="8" />
         </div>
 
         <Footer count={this.state.count} /> 

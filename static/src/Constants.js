@@ -15,6 +15,10 @@ export default {
   },
 
   Video: {
-    AIRHORN_MP4: require('./videos/airhorn.mp4')
+    AIRHORN: require('./videos/airhorn.mp4')
+  },
+
+  Audio: {
+    AIRHORN: require('../../audio/airhorn1.wav')
   }
 };

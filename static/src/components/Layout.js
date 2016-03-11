@@ -46,7 +46,7 @@ const Layout = React.createClass({
 
   getInitialState() {
     return {
-      count: 0
+      count: 1000
     };
   },
 
@@ -93,29 +93,24 @@ const Layout = React.createClass({
         <IslandTent />
         <IslandDoubleTree />
         <IslandForest />
+        <IslandForest number="1" />
         <IslandLog />
         <IslandShrooms />
+        <IslandShrooms number="1" />
+
 
         {smallIslands}
 
-        <Cloud type={1} number="1" />
-        <Cloud type={2} number="2" />
-        <Cloud type={3} number="3" />
-        <Cloud type={4} number="4" />
-        <Cloud type={3} number="5" />
-        <Cloud type={1} number="6" />
-        <Cloud type={2} number="7" />
-        <Cloud type={4} number="8" />
-
-        <Cloud type={1} number="1" small />
-        <Cloud type={2} number="2" small />
-        <Cloud type={3} number="3" small />
-        <Cloud type={4} number="4" small />
-        <Cloud type={2} number="5" small />
-        <Cloud type={3} number="6" small />
-        <Cloud type={4} number="7" small />
-        <Cloud type={1} number="8" small />
-        <Cloud type={3} number="9" small />
+        <div id="scene">
+          <Cloud type={1} number="1" />
+          <Cloud type={2} number="2" />
+          <Cloud type={3} number="3" />
+          <Cloud type={4} number="4" />
+          <Cloud type={3} number="5" />
+          <Cloud type={1} number="6" />
+          <Cloud type={2} number="7" />
+          <Cloud type={4} number="8" />
+        </div>
 
         <Footer count={this.state.count} /> 
       </div>

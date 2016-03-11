@@ -25,7 +25,7 @@ const Footer = ({count, changeCount}) => (
       </div>
     </div>
     <div className="main-text">
-      Some text will go  here about how you can do something on&nbsp;
+      <span>Open sourced by the team at Discord. Contribute yourself on&nbsp;</span>
       <a href={Constants.GITHUB_URL}>GitHub</a>
       <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
     </div>
@@ -39,7 +39,7 @@ const Content = ({addBtnClick}) => (
     <video preload className="video-airhorn" id="video-airhorn">
       <source src={Constants.Video.AIRHORN} type="video/mp4" />
     </video>
-    <audio src={Constants.Audio.AIRHORN} type="audio/wav" id="audio-airhorn" />
+    <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" id="audio-airhorn" />
     <a className="add-btn" onClick={addBtnClick}>Add to Discord</a>
   </div>
 );

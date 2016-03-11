@@ -55,8 +55,18 @@ const Layout = React.createClass({
 
   componentWillMount() {
     this.smallIslandTypes = [];
+    this.cloudTypes = [];
+
     for (let i=0; i<Constants.SMALL_ISLAND_COUNT; i++) {
       this.smallIslandTypes.push(Math.floor((Math.random() * 6) + 1));
+    }
+
+    for (let i=0; i<Constants.CLOUD_COUNT / 2; i++) {
+      this.cloudTypes.push(i);
+    }
+
+    for (let i=0; i<Constants.CLOUD_COUNT / 2; i++) {
+      this.cloudTypes.push(i);
     }
 
     AirhornCountStore.on('change', this.updateCount);
@@ -101,6 +111,12 @@ const Layout = React.createClass({
       smallIslands.push(<IslandSmall number={i} key={i} type={type} />)
     }
 
+    let clouds = [];
+    for (let i=1; i<=Constants.CLOUD_COUNT; i++) {
+      let type = this.cloudTypes[i - 1];
+      clouds.push(<Cloud type={type} number={i} key={i} />)
+    }
+
     return (
       <div className="container">
         <Content addBtnClick={this.playVideo} />
@@ -119,14 +135,7 @@ const Layout = React.createClass({
         {smallIslands}
 
         <div id="parallax">
-          <Cloud type={1} number="1" />
-          <Cloud type={2} number="2" />
-          <Cloud type={3} number="3" />
-          <Cloud type={4} number="4" />
-          <Cloud type={3} number="5" />
-          <Cloud type={1} number="6" />
-          <Cloud type={2} number="7" />
-          <Cloud type={4} number="8" />
+          {clouds}
         </div>
 
         <Footer count={this.state.count} changeCount={this.state.changeCount} /> 

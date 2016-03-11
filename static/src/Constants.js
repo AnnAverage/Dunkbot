@@ -2,6 +2,7 @@ export default {
   GITHUB_URL: 'https://github.com/hammerandchisel/airhornbot',
   DISCORD_URL: 'https://discordapp.com',
   SMALL_ISLAND_COUNT: 12,
+  CLOUD_COUNT: 8,
 
   Image: {
     AIRHORN_COUNTER: require('./images/airhorn-counter.svg'),

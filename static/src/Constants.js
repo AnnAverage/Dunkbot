@@ -4,6 +4,7 @@ export default {
   SMALL_ISLAND_COUNT: 12,
 
   Image: {
+    AIRHORN_COUNTER: require('./images/airhorn-counter.svg'),
     ISLAND_AIRHORN: require('./images/island-airhorn.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
     ISLAND_SMALL_2: require('./images/island-small-02.png'),

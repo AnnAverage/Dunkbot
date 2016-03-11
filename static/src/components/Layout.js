@@ -14,9 +14,16 @@ import Constants from '../Constants';
 
 import '../style/style.styl';
 
-const Footer = () => (
+const Footer = ({count}) => (
   <div className="footer">
-    <div className="text">
+    <div className="airhorn-count">
+      <img src={Constants.Image.AIRHORN_COUNTER} />
+      <div className="count-text">
+        <div className="count">{count}</div>
+        <div className="and-counting">and counting</div>
+      </div>
+    </div>
+    <div className="main-text">
       Some text will go  here about how you can do something on <a href={Constants.GITHUB_URL}>GitHub</a>
       <a href={Constants.GITHUB_URL} className="arrow"> ➔</a>
     </div>
@@ -36,6 +43,12 @@ const Content = ({addBtnClick}) => (
 );
 
 const Layout = React.createClass({
+
+  getInitialState() {
+    return {
+      count: 0
+    };
+  },
 
   componentWillMount() {
     this.smallIslandTypes = [];
@@ -104,7 +117,7 @@ const Layout = React.createClass({
         <Cloud type={1} number="8" small />
         <Cloud type={3} number="9" small />
 
-        <Footer/> 
+        <Footer count={this.state.count} /> 
       </div>
     );
   }

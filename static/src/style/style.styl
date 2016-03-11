@@ -57,17 +57,40 @@ body {
   justify-content: center
   background-color: white
   opacity: 0.98
-  padding: 28px
+  padding: 18px 20px
   font-size: 18px
   line-height: 24px
   box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, .1)
   
-  .text, a {
-    color: color-brown
+  .airhorn-count {
+    flex: 0.5
+    display: flex
+    font-size: 12px
+    line-height: 16px
+    font-weight: bold
+    align-items: center
+    
+    .count-text {
+      margin-left: 10px
+
+      .count {
+        color: #666
+      }
+      
+      .and-counting {
+        color: #ccc
+      }
+    }
   }
+
+  .main-text, a {
+    display: flex
+    align-items: center;
+    color: color-brown  
   
-  .arrow {
-    text-decoration: none
+    .arrow {
+      text-decoration: none
+    }
   }
 }
 

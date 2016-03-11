@@ -10,6 +10,7 @@ import IslandForest from './IslandForest';
 import IslandLog from './IslandLog';
 import IslandShrooms from './IslandShrooms';
 import IslandSmall from './IslandSmall';
+import Parallax from '../Parallax';
 import Constants from '../Constants';
 
 import '../style/style.styl';
@@ -46,7 +47,7 @@ const Layout = React.createClass({
 
   getInitialState() {
     return {
-      count: 1000
+      count: 0
     };
   },
 
@@ -57,6 +58,12 @@ const Layout = React.createClass({
     }
 
     AirhornCountStore.on('change', this.updateCount);
+  },
+
+  componentDidMount() {
+    let scene = document.getElementById('scene');
+    console.log(Parallax);
+    new Parallax(scene);
   },
 
   playVideo() {
@@ -101,15 +108,15 @@ const Layout = React.createClass({
 
         {smallIslands}
 
-        <div id="scene">
-          <Cloud type={1} number="1" />
-          <Cloud type={2} number="2" />
-          <Cloud type={3} number="3" />
-          <Cloud type={4} number="4" />
-          <Cloud type={3} number="5" />
-          <Cloud type={1} number="6" />
-          <Cloud type={2} number="7" />
-          <Cloud type={4} number="8" />
+        <div id="parallax" style={{display: 'absolute', width: '100%', height: '100%', top: 0, left: 0}}>
+          <Cloud type={1} number="1" left="-304" top="-256" />
+          <Cloud type={2} number="2" left="-400" top="400" />
+          <Cloud type={3} number="3" left="1056" top="-56" />
+          <Cloud type={4} number="4" left="784" top="504" />
+          <Cloud type={3} number="5" left="-790" top="-20" />
+          <Cloud type={1} number="6" left="-690" top="-440" />
+          <Cloud type={2} number="7" left="1520" top="360" />
+          <Cloud type={4} number="8" left="-820" top="765" />
         </div>
 
         <Footer count={this.state.count} /> 

@@ -15,12 +15,12 @@ import Constants from '../Constants';
 
 import '../style/style.styl';
 
-const Footer = ({count}) => (
+const Footer = ({count, changeCount}) => (
   <div className="footer">
     <div className="airhorn-count">
       <img src={Constants.Image.AIRHORN_COUNTER} />
       <div className="count-text">
-        <div className="count">{count}</div>
+        <div className={`count ${changeCount ? 'count-big' : ''}`}>{count}</div>
         <div className="and-counting">and counting</div>
       </div>
     </div>
@@ -48,7 +48,8 @@ const Layout = React.createClass({
 
   getInitialState() {
     return {
-      count: 0
+      count: 0,
+      changeCount: false
     };
   },
 
@@ -79,10 +80,18 @@ const Layout = React.createClass({
 
   updateCount() {
     this.setState({
-      count: AddCountStore.getCount()
+      count: AirhornCountStore.getCount(),
+      changeCount: true
     });
 
-    console.log(this.state.count);
+    clearTimeout(this.changeCountTimeout);
+    this.changeCountTimeout = setTimeout(this.finishChangeCountAnimation, Constants.Animation.COUNT_CHANGE_TIME);
+  },
+
+  finishChangeCountAnimation() {
+    this.setState({
+      changeCount: false
+    });
   },
 
   render() {
@@ -120,7 +129,7 @@ const Layout = React.createClass({
           <Cloud type={4} number="8" />
         </div>
 
-        <Footer count={this.state.count} /> 
+        <Footer count={this.state.count} changeCount={this.state.changeCount} /> 
       </div>
     );
   }

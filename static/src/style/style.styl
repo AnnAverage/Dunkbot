@@ -1,6 +1,8 @@
 color-brown = #5E4634
 color-orange = #FF7555
 color-gray = #222222
+color-count = #666
+color-count-text = #ccc
 
 body {
   font-family: roboto
@@ -75,11 +77,18 @@ body {
       margin-left: 10px
 
       .count {
-        color: #666
+        display: flex
+        justify-content: center
+        color: color-count
+        transition: all 0.3s ease
+        
+        &.count-big {
+          font-size: 24px;
+        }
       }
       
       .and-counting {
-        color: #ccc
+        color: color-count-text
       }
     }
   }

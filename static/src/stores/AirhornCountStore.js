@@ -6,6 +6,11 @@ class AirhornCountStore extends EventEmitter {
     super();
     this.count = 0;
     
+    setInterval(() => {
+      this.count++;
+      this.emit('change');
+    }, 1000);
+
     //this.ws = new WebSocket('...');
     //this.ws.onmessage = this.recievedMessage.bind(this);
   }

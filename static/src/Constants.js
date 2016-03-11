@@ -20,5 +20,9 @@ export default {
 
   Audio: {
     AIRHORN: require('../../audio/airhorn1.wav')
+  },
+
+  Animation: {
+    COUNT_CHANGE_TIME: 400
   }
 };

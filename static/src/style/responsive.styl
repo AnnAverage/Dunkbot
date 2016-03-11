@@ -25,7 +25,7 @@
     }
   
   
-    &:not(.pond):not(.trees):not(.tent):not(.small-island) {
+    &:not(.pond):not(.trees):not(.tent):not(.small-island):not(.tree) {
       visibility: hidden
       opacity: 0
     }
@@ -52,9 +52,23 @@
       }
     }  
   }}
-
-@media (max-width: 690px) {
+  
+  @media (max-width: 690px) {
   .video-airhorn {
     max-width: 90%
+  }
+  
+  .island {
+    &.tree {
+      visibility: visible
+      opacity: 1
+      left: -130px
+      top: 310px
+    }
+    
+    &.tent {
+      left: 530px
+      top: 420px
+    }
   }
 }

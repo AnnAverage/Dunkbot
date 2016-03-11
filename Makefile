@@ -7,5 +7,8 @@ bot:
 web:
 	go build -o ${WEB_BINARY} web.go
 
+clean:
+	rm ${BOT_BINARY} ${WEB_BINARY}
+
 all:
 	bot web

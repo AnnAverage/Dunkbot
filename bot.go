@@ -11,7 +11,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/b1naryth1ef/discordgo"
+	"github.com/bwmarrin/discordgo"
 	"github.com/layeh/gopus"
 	redis "gopkg.in/redis.v3"
 )
@@ -24,6 +24,7 @@ type Play struct {
 	ChannelID string
 	UserID    string
 	Sound     *Sound
+	Forced    bool
 }
 
 var queues map[string]chan *Play = make(map[string]chan *Play)
@@ -186,7 +187,9 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 		return
 	}
 
+	var forced bool = true
 	if sound == nil {
+		forced = false
 		sound = getRandomSound()
 	}
 
@@ -194,6 +197,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 		GuildID:   guild.ID,
 		ChannelID: channel.ID,
 		Sound:     sound,
+		Forced:    forced,
 	}
 
 	// Check if we already have a connection to this guild
@@ -253,11 +257,22 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 
 	time.Sleep(time.Millisecond * time.Duration(delay))
 	_, err = rcli.Pipelined(func(pipe *redis.Pipeline) error {
+		var baseChar string
+
+		if play.Forced {
+			baseChar = "f"
+		} else {
+			baseChar = "a"
+		}
+
+		base := fmt.Sprintf("airhorn:%s", baseChar)
+
 		pipe.Incr("airhorn:total")
-		pipe.Incr(fmt.Sprintf("airhorn:sound:%s", play.Sound.Name))
-		pipe.Incr(fmt.Sprintf("airhorn:user:%s:sound:%s", play.UserID, play.Sound.Name))
-		pipe.Incr(fmt.Sprintf("airhorn:guild:%s:sound:%s", play.GuildID, play.Sound.Name))
-		pipe.Incr(fmt.Sprintf("airhorn:guild:%s:chan:%s:sound:%s", play.GuildID, play.ChannelID, play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("%s:total", base))
+		pipe.Incr(fmt.Sprintf("%s:sound:%s", base, play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("%s:user:%s:sound:%s", base, play.UserID, play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("%s:guild:%s:sound:%s", base, play.GuildID, play.Sound.Name))
+		pipe.Incr(fmt.Sprintf("%s:guild:%s:chan:%s:sound:%s", base, play.GuildID, play.ChannelID, play.Sound.Name))
 		return nil
 	})
 
@@ -297,7 +312,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			parts := strings.Split(content, " ")
 
 			for _, s := range SOUNDS {
-				if s.Name == parts[1] {
+				if strings.HasSuffix(s.Name, parts[1]) {
 					sound = s
 				}
 			}

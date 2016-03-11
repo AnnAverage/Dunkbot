@@ -3,62 +3,25 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gorilla/websocket"
+	"github.com/antage/eventsource"
 	"golang.org/x/oauth2"
 	redis "gopkg.in/redis.v3"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"sync"
+	"strconv"
 	"time"
 )
-
-type Broadcaster struct {
-	Clients []*websocket.Conn
-	lock    sync.Mutex
-}
 
 var (
 	rcli          *redis.Client
 	oauthConf     *oauth2.Config
-	upgrader      websocket.Upgrader
-	broadcaster   *Broadcaster
+	es            eventsource.EventSource
 	htmlIndexPage string
 	stateString   string
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func NewBroadcaster() *Broadcaster {
-	return &Broadcaster{
-		Clients: make([]*websocket.Conn, 0),
-	}
-}
-
-func (b *Broadcaster) Listen(conn *websocket.Conn) {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	b.Clients = append(b.Clients, conn)
-}
-
-func (b *Broadcaster) Close(conn *websocket.Conn) {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	for i, other := range b.Clients {
-		if other == conn {
-			b.Clients = append(b.Clients[:i], b.Clients[i+1:]...)
-		}
-	}
-}
-
-func (b *Broadcaster) Broadcast(data []byte) {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-
-	for _, c := range b.Clients {
-		c.WriteMessage(websocket.TextMessage, data)
-	}
-}
 
 func randSeq(n int) string {
 	b := make([]rune, n)
@@ -98,37 +61,22 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
-func handleWebsocket(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Printf("Failed to upgrade: %s\n", err)
-		return
-	}
-
-	defer c.Close()
-
-	fmt.Println("Connected")
-	broadcaster.Listen(c)
-
-	for {
-		_, _, err := c.ReadMessage()
-		if err != nil {
-			broadcaster.Close(c)
-		}
-	}
-
-}
-
 func server() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/login", handleLogin)
 	http.HandleFunc("/discord_oauth_cb", handleCallback)
-	http.HandleFunc("/ws", handleWebsocket)
+	http.Handle("/events", es)
 
-	http.ListenAndServe(":14000", nil)
+	port := os.GetEnv("PORT")
+	if port == "" {
+		port = "14000"
+	}
+
+	http.ListenAndServe(host, ":"+port)
 }
 
 func broadcastLoop() {
+	var id int = 0
 	for {
 		time.Sleep(time.Second * 1)
 		result := rcli.Get("airhorn:total")
@@ -137,7 +85,8 @@ func broadcastLoop() {
 			continue
 		}
 
-		broadcaster.Broadcast([]byte(result.Val()))
+		es.SendEventMessage(result.Val(), "message", strconv.Itoa(id))
+		id += 1
 	}
 }
 
@@ -155,13 +104,12 @@ func main() {
 	_, err = rcli.Ping().Result()
 
 	if err != nil {
-		// log.WithFields(log.Fields{
-		// 	"error": err,
-		// }).Fatal("Failed to connect to redis")
+		fmt.Printf("Failed to connect to redis: %s\n", err)
 		return
 	}
 
-	broadcaster = NewBroadcaster()
+	es = eventsource.New(nil, nil)
+	defer es.Close()
 	go broadcastLoop()
 
 	data, err := ioutil.ReadFile("templates/index.html")
@@ -172,7 +120,7 @@ func main() {
 
 	htmlIndexPage = string(data[:])
 
-	baseUrl := "http://localhost:3000"
+	baseUrl := "http://discordapp.com/api"
 	endpoint := oauth2.Endpoint{
 		AuthURL:  baseUrl + "/oauth2/authorize",
 		TokenURL: baseUrl + "/oauth2/token",

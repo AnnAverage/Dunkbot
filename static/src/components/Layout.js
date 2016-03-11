@@ -1,5 +1,5 @@
 import React from 'react';
-import AirhornCountStore from '../stores/AirhornCountStore';
+import AirhornStatsStore from '../stores/AirhornStatsStore';
 import Cloud from './Cloud';
 import IslandPond from './IslandPond';
 import IslandTree from './IslandTree';
@@ -69,7 +69,7 @@ const Layout = React.createClass({
       this.cloudTypes.push(i);
     }
 
-    AirhornCountStore.on('change', this.updateCount);
+    AirhornStatsStore.on('change', this.updateCount);
   },
 
   componentDidMount() {
@@ -90,7 +90,7 @@ const Layout = React.createClass({
 
   updateCount() {
     this.setState({
-      count: AirhornCountStore.getCount(),
+      count: AirhornStatsStore.getTotal(),
       changeCount: true
     });
 

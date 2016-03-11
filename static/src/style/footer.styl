@@ -1,0 +1,52 @@
+.footer {
+  position: fixed
+  bottom: 0
+  left: 0
+  right: 0
+  display: flex
+  justify-content: center
+  background-color: white
+  opacity: 0.98
+  padding: 18px 20px
+  font-size: 18px
+  line-height: 24px
+  box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, .1)
+  
+  .airhorn-count {
+    flex: 0.5
+    display: flex
+    font-size: 12px
+    line-height: 16px
+    font-weight: 500
+    align-items: center
+    
+    .count-text {
+      margin-left: 10px
+
+      .count {
+        display: flex
+        justify-content: center
+        color: color-count
+        transition: all 0.3s ease
+        
+        &.count-big {
+          font-size: 24px;
+        }
+      }
+      
+      .and-counting {
+        color: color-count-text
+      }
+    }
+  }
+
+  .main-text, a {
+    display: flex
+    align-items: center;
+    color: color-brown  
+  
+    .arrow {
+      text-decoration: none
+    }
+  }
+}

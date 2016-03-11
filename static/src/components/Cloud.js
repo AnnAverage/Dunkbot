@@ -1,12 +1,8 @@
 import React from 'react';
 
-export default ({type, small, number, top, left}) => {
-  let style = {top, left};
+export default ({type, number}) => {
   let depth = "1.0";
   let className = `cloud cloud-${number} layer`;
-  if (small) {
-    className += ' small';
-  }
 
   if (type == 1) {
     return (

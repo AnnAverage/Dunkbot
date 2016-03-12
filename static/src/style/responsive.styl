@@ -60,15 +60,18 @@
   
   .island {
     &.tree {
+      width: calc(@width / 2)
+      height: calc(@height / 2)
+      background-size: @height @width
       visibility: visible
       opacity: 1
-      left: -130px
-      top: 310px
+      left: -50px
+      top: 340px
     }
     
     &.tent {
-      left: 530px
-      top: 420px
+      left: 580px
+      top: 580px
     }
   }
 }

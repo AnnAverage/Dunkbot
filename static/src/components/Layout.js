@@ -100,6 +100,12 @@ const Layout = React.createClass({
     }
 
     AirhornStatsStore.on('change', this.updateStats);
+
+    document.addEventListener('click', this.onDocumentClick);
+  },
+
+  onDocumentClick(event) {
+
   },
 
   componentDidMount() {

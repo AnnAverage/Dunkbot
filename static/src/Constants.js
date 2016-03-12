@@ -24,7 +24,7 @@ export default {
   },
 
   Animation: {
-    COUNT_CHANGE_TIME: 400
+    COUNT_CHANGE_TIME: 200
   },
 
   Event: {

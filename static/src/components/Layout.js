@@ -11,13 +11,14 @@ import IslandLog from './IslandLog';
 import IslandShrooms from './IslandShrooms';
 import IslandSmall from './IslandSmall';
 import Parallax from '../Parallax';
+import * as StatsActions from '../actions/StatsActions';
 import Constants from '../Constants';
 
 import '../style/style.styl';
 
 const Footer = ({count, changeCount}) => (
   <div className="footer">
-    <div className="airhorn-count">
+    <div className="airhorn-count" onClick={StatsActions.showStatsPanel}>
       <img src={Constants.Image.AIRHORN_COUNTER} />
       <div className="count-text">
         <div className={`count ${changeCount ? 'count-big' : ''}`}>{count}</div>
@@ -25,7 +26,7 @@ const Footer = ({count, changeCount}) => (
       </div>
     </div>
     <div className="main-text">
-      <span>Open sourced by the team at Discord. Contribute yourself on&nbsp;</span>
+      Open sourced by the team at Discord. Contribute yourself on&nbsp;
       <a href={Constants.GITHUB_URL}>GitHub</a>
       <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
     </div>
@@ -44,12 +45,41 @@ const Content = ({addBtnClick}) => (
   </div>
 );
 
+const StatsPanel = ({count, uniqueUsers, uniqueChannels, secretCount, show}) => {
+  if (show) {
+    return (
+        <div className="stats-panel">
+          <button onClick={StatsActions.hideStatsPanel}>Close</button>
+          <div>
+            <label>count: </label>{count}
+          </div>
+          <div>
+            <label>unique users: </label>{uniqueUsers}
+          </div>
+          <div>
+          <label>unique channels: </label>{uniqueChannels}
+          </div>
+        <div>
+          <label>secret count: </label>{secretCount}
+        </div>
+      </div>
+    );
+  }
+  else {
+    return <noscript />;
+  }
+}
+
 const Layout = React.createClass({
 
   getInitialState() {
     return {
       count: 0,
-      changeCount: false
+      uniqueUsers: 0,
+      uniqueChannels: 0,
+      secretCount: 0,
+      changeCount: false,
+      showStats: false
     };
   },
 
@@ -69,7 +99,7 @@ const Layout = React.createClass({
       this.cloudTypes.push(i);
     }
 
-    AirhornStatsStore.on('change', this.updateCount);
+    AirhornStatsStore.on('change', this.updateStats);
   },
 
   componentDidMount() {
@@ -88,10 +118,14 @@ const Layout = React.createClass({
     //window.location = '/login';
   },
 
-  updateCount() {
+  updateStats() {
     this.setState({
-      count: AirhornStatsStore.getTotal(),
-      changeCount: true
+      count: AirhornStatsStore.getCount(),
+      uniqueUsers: AirhornStatsStore.getUniqueUsers(),
+      uniqueChannels: AirhornStatsStore.getUniqueChannels(),
+      secretCount: AirhornStatsStore.getSecretCount(),
+      showStats: AirhornStatsStore.shouldShowStatsPanel(),
+      changeCount: this.state.count != AirhornStatsStore.getCount()
     });
 
     clearTimeout(this.changeCountTimeout);
@@ -137,7 +171,12 @@ const Layout = React.createClass({
         <div id="parallax">
           {clouds}
         </div>
-
+        <StatsPanel
+          show={this.state.showStats}
+          count={this.state.count}
+          uniqueUsers={this.state.uniqueUsers}
+          uniqueChannels={this.state.uniqueChannels}
+          secretCount={this.state.secretCount} />
         <Footer count={this.state.count} changeCount={this.state.changeCount} /> 
       </div>
     );

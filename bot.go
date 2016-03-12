@@ -298,26 +298,49 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 	vc.Close()
 }
 
+func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+	for _, channel := range event.Guild.Channels {
+		if channel.ID == event.Guild.ID {
+			s.ChannelMessageSend(channel.ID, "**AIRHORN BOT READY FOR HORNING. TYPE !AIRHORN IN CHAT TO ACTIVATE**")
+			return
+		}
+	}
+}
+
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	content := strings.ToLower(m.Content)
+	parts := strings.Split(strings.ToLower(m.Content), " ")
 	var sound *Sound
 
-	if strings.HasPrefix(content, "!airhorn") {
+	if parts[0] == "!airhorn" {
 		channel, _ := discord.Channel(m.ChannelID)
-		guild, _ := discord.Guild(channel.GuildID)
-
-		if channel == nil || guild == nil {
-			fmt.Printf("ERROR could not grab channel/guild\n")
+		if channel == nil {
+			log.WithFields(log.Fields{
+				"channel": m.ChannelID,
+				"message": m.ID,
+			}).Warning("Failed to grab channel")
 			return
 		}
 
-		if strings.Count(content, " ") == 1 {
-			parts := strings.Split(content, " ")
+		guild, _ := discord.Guild(channel.GuildID)
+		if guild == nil {
+			log.WithFields(log.Fields{
+				"guild":   channel.GuildID,
+				"channel": channel,
+				"message": m.ID,
+			}).Warning("Failed to grab guild")
+			return
+		}
 
+		// Support !airhorn <sound>
+		if len(parts) > 1 {
 			for _, s := range SOUNDS {
-				if strings.HasSuffix(s.Name, parts[1]) {
+				if parts[1] == s.Name {
 					sound = s
 				}
+			}
+
+			if sound == nil {
+				return
 			}
 		}
 
@@ -360,6 +383,7 @@ func main() {
 		return
 	}
 
+	discord.AddHandler(onGuildCreate)
 	discord.AddHandler(onMessageCreate)
 
 	err = discord.Open()

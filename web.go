@@ -97,7 +97,7 @@ func randSeq(n int) string {
 func getSessionOrAbort(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := store.Get(r, "session")
 
-	if err != nil {
+	if session == nil {
 		log.WithFields(log.Fields{
 			"error": err,
 		}).Error("Failed to get session")

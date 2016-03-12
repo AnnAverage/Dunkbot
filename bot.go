@@ -49,20 +49,20 @@ func createSound(Name string, Weight int, PartDelay int) *Sound {
 }
 
 var SOUNDS []*Sound = []*Sound{
-	createSound("airhorn1", 1000, 250),
-	createSound("airhorn_reverb", 800, 250),
-	createSound("airhorn_spam", 800, 0),
-	createSound("airhorn_tripletap", 800, 250),
-	createSound("airhorn_fourtap", 800, 250),
-	createSound("airhorn_distant", 500, 250),
-	createSound("airhorn_echo", 500, 250),
-	createSound("airhorn_clownfull", 250, 250),
-	createSound("airhorn_clownshort", 250, 250),
-	createSound("airhorn_clownspam", 250, 0),
-	createSound("airhorn_highfartlong", 200, 250),
-	createSound("airhorn_highfartshort", 200, 250),
-	createSound("airhorn_midshort", 100, 250),
-	createSound("airhorn_truck", 10, 250),
+	createSound("default", 1000, 250),
+	createSound("reverb", 800, 250),
+	createSound("spam", 800, 0),
+	createSound("tripletap", 800, 250),
+	createSound("fourtap", 800, 250),
+	createSound("distant", 500, 250),
+	createSound("echo", 500, 250),
+	createSound("clownfull", 250, 250),
+	createSound("clownshort", 250, 250),
+	createSound("clownspam", 250, 0),
+	createSound("horn_highfartlong", 200, 250),
+	createSound("horn_highfartshort", 200, 250),
+	createSound("midshort", 100, 250),
+	createSound("truck", 10, 250),
 }
 
 var (
@@ -105,7 +105,7 @@ func (s *Sound) Load() {
 	defer close(s.encodeChan)
 	go s.Encode()
 
-	ffmpeg := exec.Command("ffmpeg", "-i", "audio/"+s.Name+".wav", "-vol", "256", "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
+	ffmpeg := exec.Command("ffmpeg", "-i", "audio/airhorn_"+s.Name+".wav", "-vol", "256", "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
 
 	stdout, err := ffmpeg.StdoutPipe()
 	if err != nil {
@@ -273,6 +273,9 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 		pipe.Incr(fmt.Sprintf("%s:user:%s:sound:%s", base, play.UserID, play.Sound.Name))
 		pipe.Incr(fmt.Sprintf("%s:guild:%s:sound:%s", base, play.GuildID, play.Sound.Name))
 		pipe.Incr(fmt.Sprintf("%s:guild:%s:chan:%s:sound:%s", base, play.GuildID, play.ChannelID, play.Sound.Name))
+		pipe.SAdd(fmt.Sprintf("%s:users", base), play.UserID)
+		pipe.SAdd(fmt.Sprintf("%s:guilds", base), play.GuildID)
+		pipe.SAdd(fmt.Sprintf("%s:channels", base), play.ChannelID)
 		return nil
 	})
 

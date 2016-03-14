@@ -183,12 +183,14 @@ const Layout = React.createClass({
         <div id="parallax">
           {clouds}
         </div>
-        <div ref="statsPanel"><StatsPanel
-          show={this.state.showStats}
-          count={this.state.count}
-          uniqueUsers={this.state.uniqueUsers}
-          uniqueChannels={this.state.uniqueChannels}
-          secretCount={this.state.secretCount} /></div>
+        <div ref="statsPanel">
+          <StatsPanel
+            show={this.state.showStats}
+            count={this.state.count}
+            uniqueUsers={this.state.uniqueUsers}
+            uniqueChannels={this.state.uniqueChannels}
+            secretCount={this.state.secretCount} />
+        </div>
         <Footer count={this.state.count} changeCount={this.state.changeCount} /> 
       </div>
     );

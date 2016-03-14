@@ -1,12 +1,10 @@
 @require('colors')
-
-arrow-size = 10px;
-offset = 10px
+@require('variables')
 
 .stats-panel {
   margin-left: 20px
   position: fixed
-  bottom: 80px + arrow-size + offset
+  bottom: 80px + stats-panel-arrow-size + stats-panel-offset
   left: 0
   background: white
   opacity: 0.98
@@ -31,8 +29,8 @@ offset = 10px
   &::after{
     content: ""
     position: absolute
-    left: "calc(50% - %s)" % arrow-size
-    border: arrow-size solid black
+    left: "calc(50% - %s)" % stats-panel-arrow-size
+    border: stats-panel-arrow-size solid black
     border-color: transparent transparent white white
     transform-origin: 0 0
     transform: rotate(-45deg)

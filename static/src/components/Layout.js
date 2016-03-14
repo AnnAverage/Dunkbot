@@ -18,11 +18,13 @@ import '../style/style.styl';
 
 const Footer = ({count, changeCount}) => (
   <div className="footer">
-    <div className="airhorn-count" onClick={StatsActions.showStatsPanel}>
-      <img src={Constants.Image.AIRHORN_COUNTER} />
-      <div className="count-text">
-        <div className={`count ${changeCount ? 'count-big' : ''}`}>{count}</div>
-        <div className="and-counting">and counting</div>
+    <div className="airhorn-count">
+      <div className="airhorn-count-content" onClick={StatsActions.showStatsPanel}>
+        <img src={Constants.Image.AIRHORN_COUNTER} />
+        <div className="count-text">
+          <div className={`count ${changeCount ? 'count-big' : ''}`}>{count}</div>
+          <div className="and-counting">and counting</div>
+        </div>
       </div>
     </div>
     <div className="main-text">

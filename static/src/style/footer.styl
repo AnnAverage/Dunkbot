@@ -16,33 +16,37 @@
 
   .airhorn-count {
     flex: 0.5;
-    display: flex;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 500;
-    align-items: center;
-    cursor: pointer;
-
-    &:hover .count, &:hover .and-counting {
-      text-decoration: underline;
-    }
     
-    .count-text {
-      margin-left: 10px;
-
-      .count {
-        display: flex;
-        justify-content: center;
-        color: color-medium-gray;
-        transition: all 0.2s ease;
-        
-        &.count-big {
-          font-size: 18px;
-        }
+    .airhorn-count-content {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 500;
+      width: 170px;
+      
+      &:hover .count, &:hover .and-counting {
+        text-decoration: underline;
       }
       
-      .and-counting {
-        color: color-lightest-gray;
+      .count-text {
+        margin-left: 10px;
+
+        .count {
+          display: flex;
+          justify-content: center;
+          color: color-medium-gray;
+          transition: all 0.2s ease;
+          
+          &.count-big {
+            font-size: 18px;
+          }
+        }
+        
+        .and-counting {
+          color: color-lightest-gray;
+        }
       }
     }
   }

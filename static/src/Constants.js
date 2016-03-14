@@ -30,5 +30,9 @@ export default {
   Event: {
     STATS_PANEL_SHOW: 'EVENT_STATS_PANEL_SHOW',
     STATS_PANEL_HIDE: 'EVENT_STATS_PANEL_HIDE'
+  },
+
+  MediaQuery: {
+    PHONE: 690
   }
 };

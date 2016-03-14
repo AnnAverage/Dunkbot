@@ -49,18 +49,22 @@ const StatsPanel = ({count, uniqueUsers, uniqueChannels, secretCount, show}) => 
   if (show) {
     return (
         <div className="stats-panel">
-          <button onClick={StatsActions.hideStatsPanel}>Close</button>
+          <div className="stats-content">
+            <div className="close-btn-container">
+              <span className="close-btn" onClick={StatsActions.hideStatsPanel}>✖</span>
+            </div>
+            <div>
+              <label>Count: </label>{count}
+            </div>
+            <div>
+              <label>Unique users: </label>{uniqueUsers}
+            </div>
+            <div>
+            <label>Unique channels: </label>{uniqueChannels}
+            </div>
           <div>
-            <label>count: </label>{count}
+            <label>Secret count: </label>{secretCount}
           </div>
-          <div>
-            <label>unique users: </label>{uniqueUsers}
-          </div>
-          <div>
-          <label>unique channels: </label>{uniqueChannels}
-          </div>
-        <div>
-          <label>secret count: </label>{secretCount}
         </div>
       </div>
     );
@@ -105,7 +109,9 @@ const Layout = React.createClass({
   },
 
   onDocumentClick(event) {
-
+    if (!this.refs.statsPanel.contains(event.target)) {
+      StatsActions.hideStatsPanel();
+    }
   },
 
   componentDidMount() {
@@ -177,12 +183,12 @@ const Layout = React.createClass({
         <div id="parallax">
           {clouds}
         </div>
-        <StatsPanel
+        <div ref="statsPanel"><StatsPanel
           show={this.state.showStats}
           count={this.state.count}
           uniqueUsers={this.state.uniqueUsers}
           uniqueChannels={this.state.uniqueChannels}
-          secretCount={this.state.secretCount} />
+          secretCount={this.state.secretCount} /></div>
         <Footer count={this.state.count} changeCount={this.state.changeCount} /> 
       </div>
     );

@@ -129,7 +129,6 @@
   animation-iteration-count: infinite
   animation-timing-function: ease-in-out
   animation-direction: alternate
-  animation-play-state: running
   overflow: visible
 }
 
@@ -152,18 +151,18 @@
 
 @keyframes stretch {
   from {
-    transform: translateY(0px)
+    transform: translate3d(0px, 0px, 0px)
   }
   to {
-    transform: translateY(2px)
+    transform: translate3d(0px, 2px, 0px)
   }
 }
 
 @keyframes float {
   from {
-    transform: translateY(4px)
+    transform: translate3d(0px, 4px, 0px)
   }
   to {
-     transform: translateY(-4px)
+     transform: translate3d(0px, -4px, 0px)
   }
 }

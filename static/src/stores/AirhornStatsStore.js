@@ -11,23 +11,23 @@ class AirhornStatsStore extends EventEmitter {
     this._secretCount = 0;
     this._shouldShowStatsPanel = false;
     
-    setInterval(() => {
-      let count = Math.random();
-      let uniqueUsers = Math.random();
-      let uniqueChannels = Math.random();
-      let secretCount = Math.random();
+    // setInterval(() => {
+    //   let count = Math.random();
+    //   let uniqueUsers = Math.random();
+    //   let uniqueChannels = Math.random();
+    //   let secretCount = Math.random();
 
-      this.recievedMessage({data: {
-          total: count > 0.001 ? this._count+1 : this._count,
-          uniqueUsers: uniqueUsers > 0.8 || this._uniqueUsers <= this._uniqueChannels ? this._uniqueUsers + 1 : this._uniqueUsers,
-          uniqueChannels: uniqueChannels > 0.95 || this._uniqueChannels == 0 ? this._uniqueChannels + 1 : this._uniqueChannels,
-          secretCount: secretCount > 0.95 ? this._secretCount + 1 : this._secretCount
-        }
-      });
-    }, 1000);
+    //   this.recievedMessage({data: {
+    //       total: count > 0.001 ? this._count+1 : this._count,
+    //       uniqueUsers: uniqueUsers > 0.8 || this._uniqueUsers <= this._uniqueChannels ? this._uniqueUsers + 1 : this._uniqueUsers,
+    //       uniqueChannels: uniqueChannels > 0.95 || this._uniqueChannels == 0 ? this._uniqueChannels + 1 : this._uniqueChannels,
+    //       secretCount: secretCount > 0.95 ? this._secretCount + 1 : this._secretCount
+    //     }
+    //   });
+    // }, 1000);
 
-    //this.ws = new WebSocket('...');
-    //this.ws.onmessage = this.recievedMessage.bind(this);
+    let eventSource = new EventSource('/events');
+    eventSource.onmessage = this.recievedMessage.bind(this);
   }
 
   recievedMessage(event) {

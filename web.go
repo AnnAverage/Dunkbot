@@ -242,7 +242,7 @@ func handleMe(w http.ResponseWriter, r *http.Request) {
 }
 
 func server() {
-	http.HandleFunc("/", handleIndex)
+	http.Handle("/", http.FileServer(http.Dir("static/dist")))
 	http.HandleFunc("/me", handleMe)
 	http.HandleFunc("/login", handleLogin)
 	http.HandleFunc("/discord_oauth_cb", handleCallback)

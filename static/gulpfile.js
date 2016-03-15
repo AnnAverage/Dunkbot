@@ -10,14 +10,10 @@ const nib = require('nib');
 
 gulp.task('default', ['dev']);
 
-function getWebpackOptions() {
-  return {
-    debug: true,
-    devtool: 'source-map',
+function getWebpackOptions(debug) {
+  let options = {
     entry: {
       app: [
-        'webpack-dev-server/client?http://localhost:8000',
-        './src/webpack',
         './src/app'
       ]
     },
@@ -50,10 +46,18 @@ function getWebpackOptions() {
       new webpack.NoErrorsPlugin()
     ]
   };
+
+  if (debug) {
+    options.debug = true;
+    options.devtool = 'source-map';
+    options.entry.app.unshift('webpack-dev-server/client?http://localhost:8000', './src/webpack');
+  }
+
+  return options;
 }
 
 gulp.task('dev', () => {
-  new WebpackDevServer(webpack(getWebpackOptions()), {
+  new WebpackDevServer(webpack(getWebpackOptions(true)), {
     contentBase: './src',
     hot: true,
     inline: true,
@@ -77,7 +81,7 @@ gulp.task('dev', () => {
 });
 
 gulp.task('build', ['clean'], () => {
-  webpack(getWebpackOptions(), (err) => {
+  webpack(getWebpackOptions(false), (err) => {
     if (err) {
       console.log(err)
     }

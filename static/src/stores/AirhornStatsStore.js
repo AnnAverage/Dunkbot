@@ -7,34 +7,42 @@ class AirhornStatsStore extends EventEmitter {
     super();
     this._count = 0;
     this._uniqueUsers = 0;
+    this._uniqueGuilds = 0;
     this._uniqueChannels = 0;
     this._secretCount = 0;
     this._shouldShowStatsPanel = false;
-    
-    // setInterval(() => {
-    //   let count = Math.random();
-    //   let uniqueUsers = Math.random();
-    //   let uniqueChannels = Math.random();
-    //   let secretCount = Math.random();
 
-    //   this.recievedMessage({data: {
-    //       total: count > 0.001 ? this._count+1 : this._count,
-    //       uniqueUsers: uniqueUsers > 0.8 || this._uniqueUsers <= this._uniqueChannels ? this._uniqueUsers + 1 : this._uniqueUsers,
-    //       uniqueChannels: uniqueChannels > 0.95 || this._uniqueChannels == 0 ? this._uniqueChannels + 1 : this._uniqueChannels,
-    //       secretCount: secretCount > 0.95 ? this._secretCount + 1 : this._secretCount
-    //     }
-    //   });
-    // }, 1000);
-
-    let eventSource = new EventSource('/events');
+    let eventSource = new EventSource("/events");
     eventSource.onmessage = this.recievedMessage.bind(this);
   }
 
+  fakeData() {
+    setInterval(() => {
+      let count = Math.random();
+      let uniqueUsers = Math.random();
+      let uniqueGuilds = Math.random();
+      let uniqueChannels = Math.random();
+      let secretCount = Math.random();
+
+      this.recievedMessage({
+        data: JSON.stringify({
+          total: count > 0.001 ? this._count+1 : this._count,
+          unique_users: uniqueUsers > 0.8 || this._uniqueUsers <= this._uniqueChannels ? Number.parseInt(this._uniqueUsers) + 1 : this._uniqueUsers,
+          unique_guilds: uniqueGuilds > 0.95 || this._uniqueGuilds == 0 ? Number.parseInt(this._uniqueGuilds) + 1 : this._uniqueGuilds,
+          unique_channels: uniqueChannels > 0.9 || this._uniqueChannels == 0 || this._uniqueChannels <= this._uniqueGuilds ? Number.parseInt(this._uniqueChannels) + 1 : this._uniqueChannels,
+          secret_count: secretCount > 0.95 ? Number.parseInt(this._secretCount) + 1 : this._secretCount
+        })
+      });
+    }, 1000);
+  }
+
   recievedMessage(event) {
-    this._count = event.data.total;
-    this._uniqueUsers = event.data.uniqueUsers;
-    this._uniqueChannels = event.data.uniqueChannels;
-    this._secretCount = event.data.secretCount;
+    let data = JSON.parse(event.data);
+    this._count = data.total || 0;
+    this._uniqueUsers = data.unique_users || 0;
+    this._uniqueGuilds = data.unique_guilds || 0;
+    this._uniqueChannels = data.unique_channels || 0;
+    this._secretCount = data.secret_count || 0;
     this.emit('change');
   }
 
@@ -54,6 +62,10 @@ class AirhornStatsStore extends EventEmitter {
 
   getUniqueUsers() {
     return this._uniqueUsers;
+  }
+
+  getUniqueGuilds() {
+    return this._uniqueGuilds;
   }
 
   getUniqueChannels() {

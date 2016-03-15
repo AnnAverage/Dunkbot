@@ -47,7 +47,7 @@ const Content = ({addBtnClick}) => (
   </div>
 );
 
-const StatsPanel = ({count, uniqueUsers, uniqueChannels, secretCount, show}) => {
+const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show}) => {
   if (show) {
     return (
         <div className="stats-panel">
@@ -60,6 +60,9 @@ const StatsPanel = ({count, uniqueUsers, uniqueChannels, secretCount, show}) => 
             </div>
             <div>
               <label>Unique users: </label>{uniqueUsers}
+            </div>
+            <div>
+            <label>Unique guilds: </label>{uniqueGuilds}
             </div>
             <div>
             <label>Unique channels: </label>{uniqueChannels}
@@ -82,6 +85,7 @@ const Layout = React.createClass({
     return {
       count: 0,
       uniqueUsers: 0,
+      uniqueGuilds: 0,
       uniqueChannels: 0,
       secretCount: 0,
       changeCount: false,
@@ -128,14 +132,14 @@ const Layout = React.createClass({
   },
 
   startOAuth() {
-    console.log('starting OAuth flow');
-    //window.location = '/login';
+    window.location = '/login';
   },
 
   updateStats() {
     this.setState({
       count: AirhornStatsStore.getCount(),
       uniqueUsers: AirhornStatsStore.getUniqueUsers(),
+      uniqueGuilds: AirhornStatsStore.getUniqueGuilds(),
       uniqueChannels: AirhornStatsStore.getUniqueChannels(),
       secretCount: AirhornStatsStore.getSecretCount(),
       showStats: AirhornStatsStore.shouldShowStatsPanel(),
@@ -190,6 +194,7 @@ const Layout = React.createClass({
             show={this.state.showStats}
             count={this.state.count}
             uniqueUsers={this.state.uniqueUsers}
+            uniqueGuilds={this.state.uniqueGuilds}
             uniqueChannels={this.state.uniqueChannels}
             secretCount={this.state.secretCount} />
         </div>

@@ -20,6 +20,14 @@ import (
 )
 
 var (
+	READ_MESSAGES   = 1024
+	SEND_MESSAGES   = 2048
+	MANAGE_MESSAGES = 8192
+	CONNECT         = 1048576
+	SPEAK           = 2097152
+)
+
+var (
 	rcli          *redis.Client
 	oauthConf     *oauth2.Config
 	store         *sessions.CookieStore
@@ -126,9 +134,11 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	session.Values["state"] = randSeq(32)
 	session.Save(r, w)
 
+	perms := READ_MESSAGES | SEND_MESSAGES | MANAGE_MESSAGES | CONNECT | SPEAK
+
 	// Return a redirect to the ouath provider
 	url := oauthConf.AuthCodeURL(session.Values["state"].(string), oauth2.AccessTypeOnline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, url+fmt.Sprintf("&permissions=%i", perms), http.StatusTemporaryRedirect)
 }
 
 func handleCallback(w http.ResponseWriter, r *http.Request) {

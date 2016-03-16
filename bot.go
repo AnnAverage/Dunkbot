@@ -345,6 +345,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		go enqueuePlay(m.Author, guild, sound)
+		s.ChannelMessageDelete(m.ChannelID, m.ID)
 	}
 }
 

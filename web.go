@@ -149,7 +149,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// Return a redirect to the ouath provider
 	url := oauthConf.AuthCodeURL(session.Values["state"].(string), oauth2.AccessTypeOnline)
-	http.Redirect(w, r, url+fmt.Sprintf("&permissions=%i", perms), http.StatusTemporaryRedirect)
+	http.Redirect(w, r, url+fmt.Sprintf("&permissions=%v", perms), http.StatusTemporaryRedirect)
 }
 
 func handleCallback(w http.ResponseWriter, r *http.Request) {

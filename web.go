@@ -21,11 +21,10 @@ import (
 
 var (
 	// Permission Constants
-	READ_MESSAGES   = 1024
-	SEND_MESSAGES   = 2048
-	MANAGE_MESSAGES = 8192
-	CONNECT         = 1048576
-	SPEAK           = 2097152
+	READ_MESSAGES = 1024
+	SEND_MESSAGES = 2048
+	CONNECT       = 1048576
+	SPEAK         = 2097152
 
 	// Redis client (for stats)
 	rcli *redis.Client
@@ -145,7 +144,8 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	session.Values["state"] = randSeq(32)
 	session.Save(r, w)
 
-	perms := READ_MESSAGES | SEND_MESSAGES | MANAGE_MESSAGES | CONNECT | SPEAK
+	// OR the permissions we want
+	perms := READ_MESSAGES | SEND_MESSAGES | CONNECT | SPEAK
 
 	// Return a redirect to the ouath provider
 	url := oauthConf.AuthCodeURL(session.Values["state"].(string), oauth2.AccessTypeOnline)
@@ -266,7 +266,7 @@ func server() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/me", handleMe)
 	http.HandleFunc("/login", handleLogin)
-	http.HandleFunc("/discord_oauth_cb", handleCallback)
+	http.HandleFunc("/callback", handleCallback)
 	http.Handle("/events", es)
 
 	port := os.Getenv("PORT")
@@ -356,7 +356,7 @@ func main() {
 		ClientSecret: *ClientSecret,
 		Scopes:       []string{"bot", "identify"},
 		Endpoint:     endpoint,
-		RedirectURL:  "https://airhornbot.com/discord_oauth_cb",
+		RedirectURL:  "https://airhornbot.com/callback",
 	}
 
 	server()

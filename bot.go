@@ -334,6 +334,12 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 	}
 }
 
+func onReady(s *discordgo.Session, r *discordgo.Ready) {
+	for _, guild := range r.Guilds {
+		s.GuildLeave(guild.ID)
+	}
+}
+
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	parts := strings.Split(strings.ToLower(m.Content), " ")
 	var sound *Sound
@@ -372,7 +378,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		go enqueuePlay(m.Author, guild, sound)
-		s.ChannelMessageDelete(m.ChannelID, m.ID)
 	}
 }
 
@@ -411,6 +416,7 @@ func main() {
 		return
 	}
 
+	discord.AddHandler(onReady)
 	discord.AddHandler(onGuildCreate)
 	discord.AddHandler(onMessageCreate)
 

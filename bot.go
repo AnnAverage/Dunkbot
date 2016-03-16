@@ -230,7 +230,8 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 			delay = randomRange(2000, 8000)
 		}
 
-		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false, 5000)
+		// TODO: timeout
+		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
 		vc.Receive = false
 		if err != nil {
 			log.WithFields(log.Fields{

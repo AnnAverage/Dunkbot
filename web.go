@@ -20,22 +20,33 @@ import (
 )
 
 var (
+	// Permission Constants
 	READ_MESSAGES   = 1024
 	SEND_MESSAGES   = 2048
 	MANAGE_MESSAGES = 8192
 	CONNECT         = 1048576
 	SPEAK           = 2097152
-)
 
-var (
-	rcli          *redis.Client
-	oauthConf     *oauth2.Config
-	store         *sessions.CookieStore
-	es            eventsource.EventSource
+	// Redis client (for stats)
+	rcli *redis.Client
+
+	// Oauth2 Config
+	oauthConf *oauth2.Config
+
+	// Used for storing session information in a cookie
+	store *sessions.CookieStore
+
+	// Used for pushing live stat updates to the client
+	es eventsource.EventSource
+
+	// Source of the HTML page (cached in memory for performance)
 	htmlIndexPage string
-	apiBaseUrl    = "https://discordapp.com/api"
+
+	// Base URL of the discord API
+	apiBaseUrl = "https://discordapp.com/api"
 )
 
+// Represents a JSON struct of stats that are updated every second and pushed to the client
 type CountUpdate struct {
 	Total          string `json:"total"`
 	UniqueUsers    string `json:"unique_users"`

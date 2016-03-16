@@ -16,26 +16,48 @@ import (
 	redis "gopkg.in/redis.v3"
 )
 
-var discord *discordgo.Session
-var rcli *redis.Client
+var (
+	// discordgo session
+	discord *discordgo.Session
 
+	// Redis client connection (used for stats)
+	rcli *redis.Client
+
+	// Map of Guild id's to *Play channels, used for queuing and rate-limiting guilds
+	queues map[string]chan *Play = make(map[string]chan *Play)
+
+	// Sound attributes
+	SOUND_RANGE    = 0
+	BITRATE        = 128
+	MAX_QUEUE_SIZE = 6
+)
+
+// Play represents an individual use of the !airhorn command
 type Play struct {
 	GuildID   string
 	ChannelID string
 	UserID    string
 	Sound     *Sound
-	Forced    bool
+
+	// If true, this was a forced play using a specific airhorn sound name
+	Forced bool
 }
 
-var queues map[string]chan *Play = make(map[string]chan *Play)
-
+// Sound represents a sound clip
 type Sound struct {
-	Name      string
-	Weight    int
+	Name string
+
+	// Weight adjust how likely it is this song will play, higher = more likely
+	Weight int
+
+	// Delay (in milliseconds) for the bot to wait before sending the disconnect request
 	PartDelay int
 
+	// Channel used for the encoder routine
 	encodeChan chan []int16
-	buffer     [][]byte
+
+	// Buffer to store encoded PCM packets
+	buffer [][]byte
 }
 
 func createSound(Name string, Weight int, PartDelay int) *Sound {
@@ -48,6 +70,7 @@ func createSound(Name string, Weight int, PartDelay int) *Sound {
 	}
 }
 
+// Array of all the sounds we have
 var SOUNDS []*Sound = []*Sound{
 	createSound("default", 1000, 250),
 	createSound("reverb", 800, 250),
@@ -65,12 +88,7 @@ var SOUNDS []*Sound = []*Sound{
 	createSound("truck", 10, 250),
 }
 
-var (
-	SOUND_RANGE    = 0
-	BITRATE        = 128
-	MAX_QUEUE_SIZE = 6
-)
-
+// Encode reads data from ffmpeg and encodes it using gopus
 func (s *Sound) Encode() {
 	encoder, err := gopus.NewEncoder(48000, 2, gopus.Audio)
 	if err != nil {
@@ -95,12 +113,13 @@ func (s *Sound) Encode() {
 			return
 		}
 
+		// Append the PCM frame to our buffer
 		s.buffer = append(s.buffer, opus)
 	}
-
 }
 
-func (s *Sound) Load() {
+// Load attempts to load and encode a sound file from disk
+func (s *Sound) Load() error {
 	s.encodeChan = make(chan []int16, 10)
 	defer close(s.encodeChan)
 	go s.Encode()
@@ -110,25 +129,28 @@ func (s *Sound) Load() {
 	stdout, err := ffmpeg.StdoutPipe()
 	if err != nil {
 		fmt.Println("StdoutPipe Error:", err)
-		return
+		return err
 	}
 
 	err = ffmpeg.Start()
 	if err != nil {
 		fmt.Println("RunStart Error:", err)
-		return
+		return err
 	}
 
 	for {
 		// read data from ffmpeg stdout
 		InBuf := make([]int16, 960*2)
 		err = binary.Read(stdout, binary.LittleEndian, &InBuf)
+
+		// If this is the end of the file, just return
 		if err == io.EOF || err == io.ErrUnexpectedEOF {
-			return
+			return nil
 		}
+
 		if err != nil {
 			fmt.Println("error reading from ffmpeg stdout :", err)
-			return
+			return err
 		}
 
 		// write pcm data to the encodeChan
@@ -136,6 +158,7 @@ func (s *Sound) Load() {
 	}
 }
 
+// Plays this sound over the specified VoiceConnection
 func (s *Sound) Play(vc *discordgo.VoiceConnection) {
 	vc.Speaking(true)
 	defer vc.Speaking(false)
@@ -145,6 +168,7 @@ func (s *Sound) Play(vc *discordgo.VoiceConnection) {
 	}
 }
 
+// Attempts to find the current users voiec channel inside a given guild
 func getCurrentVoiceChannel(user *discordgo.User, guild *discordgo.Guild) *discordgo.Channel {
 	for _, vs := range guild.VoiceStates {
 		if vs.UserID == user.ID {
@@ -155,11 +179,13 @@ func getCurrentVoiceChannel(user *discordgo.User, guild *discordgo.Guild) *disco
 	return nil
 }
 
+// Returns a random integer between min and max
 func randomRange(min, max int) int {
 	rand.Seed(time.Now().Unix())
 	return rand.Intn(max-min) + min
 }
 
+// Returns a random sound
 func getRandomSound() *Sound {
 	var i int
 	number := randomRange(0, SOUND_RANGE)
@@ -175,9 +201,9 @@ func getRandomSound() *Sound {
 	return nil
 }
 
+// Enqueues a play into the ratelimit/buffer guild queue
 func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 	// Grab the users voice channel
-	// TODO: sometimes this isn't accurate
 	channel := getCurrentVoiceChannel(user, guild)
 	if channel == nil {
 		log.WithFields(log.Fields{
@@ -211,53 +237,10 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 		queues[guild.ID] = make(chan *Play, MAX_QUEUE_SIZE)
 		playSound(play, nil)
 	}
-
 }
 
-func playSound(play *Play, vc *discordgo.VoiceConnection) {
-	var (
-		err   error
-		delay int = 0
-	)
-
-	log.WithFields(log.Fields{
-		"play": play,
-	}).Info("Playing sound")
-
-	if vc == nil {
-		// Only calculate delay if its the first time joining the channel
-		if randomRange(1, 25) == 5 {
-			delay = randomRange(2000, 8000)
-		}
-
-		// TODO: timeout
-		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
-		vc.Receive = false
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-			}).Error("Failed to play sound")
-		}
-
-		err = vc.WaitUntilConnected()
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-				"play":  play,
-			}).Error("Failed to join voice channel")
-			vc.Close()
-			delete(queues, play.GuildID)
-			return
-		}
-	}
-
-	if vc.ChannelID != play.ChannelID {
-		vc.ChangeChannel(play.ChannelID)
-		time.Sleep(time.Millisecond * 200)
-	}
-
-	time.Sleep(time.Millisecond * time.Duration(delay))
-	_, err = rcli.Pipelined(func(pipe *redis.Pipeline) error {
+func trackSoundStats(play *Play) {
+	_, err := rcli.Pipelined(func(pipe *redis.Pipeline) error {
 		var baseChar string
 
 		if play.Forced {
@@ -285,24 +268,67 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) {
 			"error": err,
 		}).Warning("Failed to track stats in redis")
 	}
+}
 
+// Play a sound
+func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
+	log.WithFields(log.Fields{
+		"play": play,
+	}).Info("Playing sound")
+
+	if vc == nil {
+		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
+		vc.Receive = false
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err,
+			}).Error("Failed to play sound")
+		}
+
+		err = vc.WaitUntilConnected()
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err,
+				"play":  play,
+			}).Error("Failed to join voice channel")
+			vc.Close()
+			delete(queues, play.GuildID)
+			return err
+		}
+	}
+
+	if vc.ChannelID != play.ChannelID {
+		vc.ChangeChannel(play.ChannelID)
+		time.Sleep(time.Millisecond * 200)
+	}
+
+	// Sleep for a specified amount of time before playing the sound
+	time.Sleep(time.Millisecond * 32)
+
+	// Play the sound
 	play.Sound.Play(vc)
 
+	// Track stats for this play in redis
+	trackSoundStats(play)
+
+	// If there is another song in the queue, recurse and play that
 	if len(queues[play.GuildID]) > 0 {
 		play := <-queues[play.GuildID]
 		playSound(play, vc)
-		return
+		return nil
 	}
 
+	// If the queue is empty, delete it
 	time.Sleep(time.Millisecond * time.Duration(play.Sound.PartDelay))
 	delete(queues, play.GuildID)
 	vc.Close()
+	return nil
 }
 
 func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, "**AIRHORN BOT READY FOR HORNING. TYPE !AIRHORN IN CHAT TO ACTIVATE**")
+			s.ChannelMessageSend(channel.ID, "**AIRHORN BOT READY FOR HORNING. TYPE `!AIRHORN` IN CHAT TO ACTIVATE**")
 			return
 		}
 	}

@@ -17,6 +17,7 @@ const FOLDER_DIST = path.resolve('./dist');
 const PATH_ENTRY = path.join(FOLDER_SRC, 'app');
 const PATH_LAYOUT = path.join(FOLDER_SRC, 'components/Layout');
 const PATH_WEBPACK = path.join(FOLDER_SRC, 'webpack');
+const PATH_STATS = path.join(FOLDER_DIST, 'stats.json');
 
 const babelOptions = {
   presets: ['es2015', 'react']
@@ -91,10 +92,13 @@ gulp.task('dev', () => {
   });
 });
 
-gulp.task('build', ['clean'], () => {
-  webpack(getWebpackOptions(false), (err) => {
+gulp.task('build', ['clean'], (callback) => {
+  webpack(getWebpackOptions(false), (err, stats) => {
     if (err) {
       console.log(err)
+    }
+    else {
+      fs.writeFile(PATH_STATS, JSON.stringify(stats.toJson()), callback);
     }
   });
 });
@@ -104,24 +108,22 @@ gulp.task('clean', () => {
 });
 
 gulp.task('dist', ['build'], () => {
+  const stats = JSON.parse(fs.readFileSync(PATH_STATS));
+  const findAsset = name => stats.modules.filter(mod => mod.identifier.indexOf(name) !== -1)[0].assets[0];
+
   require('react');
   require('babel-register')(babelOptions);
-  require.extensions['.svg'] = () => {};
-  require.extensions['.png'] = () => {};
-  require.extensions['.mp4'] = () => {};
-  require.extensions['.wav'] = () => {};
   require.extensions['.styl'] = () => {};
+  require.extensions['.svg'] = require.extensions['.png'] =
+    require.extensions['.mp4'] = require.extensions['.wav'] = (module, filename) => {
+      module.exports = findAsset(filename);
+    };
 
   createGlobals();
 
   function render(src, dst, content) {
     return gulp.src(src, { cwd: FOLDER_SRC })
-      .pipe(htmlreplace({
-        mount: {
-          src: '',
-          tpl: content,
-        },
-      }))
+      .pipe(htmlreplace({mount: content}))
       .pipe(rename(dst))
       .pipe(gulp.dest(FOLDER_DIST));
   }

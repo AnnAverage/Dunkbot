@@ -3,16 +3,16 @@
 import React from 'react';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
 import Cloud from './Cloud';
-import IslandPond from './IslandPond';
-import IslandTree from './IslandTree';
-import IslandTrees from './IslandTrees';
-import IslandTent from './IslandTent';
-import IslandDoubleTree from './IslandDoubleTree';
-import IslandForest from './IslandForest';
-import IslandLog from './IslandLog';
-import IslandShrooms from './IslandShrooms';
-import IslandSmall from './IslandSmall';
-import Parallax from '../Parallax';
+import IslandPond from './islands/IslandPond';
+import IslandTree from './islands/IslandTree';
+import IslandTrees from './islands/IslandTrees';
+import IslandTent from './islands/IslandTent';
+import IslandDoubleTree from './islands/IslandDoubleTree';
+import IslandForest from './islands/IslandForest';
+import IslandLog from './islands/IslandLog';
+import IslandShrooms from './islands/IslandShrooms';
+import IslandSmall from './islands/IslandSmall';
+import Parallax from '../libs/Parallax';
 import * as StatsActions from '../actions/StatsActions';
 import Constants from '../Constants';
 
@@ -84,7 +84,6 @@ const StatsPanel = ({ count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCo
 };
 
 const Layout = React.createClass({
-
   getInitialState() {
     return {
       count: 0,
@@ -102,15 +101,11 @@ const Layout = React.createClass({
     this.cloudTypes = [];
 
     for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
-      this.smallIslandTypes.push(Math.floor((Math.random() * 6) + 1));
+      this.smallIslandTypes.push(i % Constants.UNIQUE_SMALL_ISLAND_COUNT);
     }
 
-    for (let i = 0; i < Constants.CLOUD_COUNT / 2; i++) {
-      this.cloudTypes.push(i);
-    }
-
-    for (let i = 0; i < Constants.CLOUD_COUNT / 2; i++) {
-      this.cloudTypes.push(i);
+    for (let i = 0; i < Constants.CLOUD_COUNT; i++) {
+      this.cloudTypes.push(i % Constants.UNIQUE_CLOUD_COUNT);
     }
 
     AirhornStatsStore.on('change', this.updateStats);

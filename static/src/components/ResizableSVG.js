@@ -1,6 +1,6 @@
 import Constants from '../Constants';
 
-const ResizeableSvg = {
+const ResizeableSVG = {
   checkMediaQuery() {
     return window.matchMedia(`(max-width: ${Constants.MediaQuery.PHONE}px)`).matches;
   },
@@ -24,4 +24,4 @@ const ResizeableSvg = {
   }
 };
 
-export default ResizeableSvg;
+export default ResizeableSVG;

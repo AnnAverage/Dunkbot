@@ -1,10 +1,10 @@
 // jscs:disable maximumLineLength
 
 import React from 'react';
-import ResizableSvg from './ResizableSvg';
+import ResizableSVG from '../ResizableSVG';
 
 export default React.createClass({
-  mixins: [ResizableSvg],
+  mixins: [ResizableSVG],
 
   render() {
     let viewBox = this.getViewBox(259, 228);

@@ -1,8 +1,8 @@
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDOM from 'react-dom';
 import Layout from './components/Layout';
 
-ReactDom.render(
+ReactDOM.render(
   <Layout />,
   document.getElementById('app')
 );

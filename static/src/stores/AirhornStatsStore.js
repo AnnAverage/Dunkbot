@@ -16,7 +16,7 @@ class AirhornStatsStore extends EventEmitter {
     super();
 
     let eventSource = new EventSource('/events');
-    eventSource.onmessage = this.recievedMessage.bind(this);
+    eventSource.onmessage = this.receivedMessage.bind(this);
   }
 
   fakeData() {
@@ -27,7 +27,7 @@ class AirhornStatsStore extends EventEmitter {
       let uniqueChannelsRnd = Math.random();
       let secretCountRnd = Math.random();
 
-      this.recievedMessage({
+      this.receivedMessage({
         data: JSON.stringify({
           total: countRnd > 0.001 ? count + 1 : count,
 
@@ -46,7 +46,7 @@ class AirhornStatsStore extends EventEmitter {
     }, 1000);
   }
 
-  recievedMessage(event) {
+  receivedMessage(event) {
     let data = JSON.parse(event.data);
     count = data.total || 0;
     uniqueUsers = data.unique_users || 0;

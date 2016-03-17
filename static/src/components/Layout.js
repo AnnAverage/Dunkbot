@@ -130,7 +130,7 @@ const Layout = React.createClass({
   },
 
   startOAuth() {
-    //window.location = '/login';
+    window.location = '/login';
   },
 
   updateStats() {

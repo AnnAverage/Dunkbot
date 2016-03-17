@@ -5,3 +5,4 @@ app/settings.py
 .DS_Store
 airhornbot
 airhornweb
+requests.log

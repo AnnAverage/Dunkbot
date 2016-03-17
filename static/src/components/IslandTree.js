@@ -1,6 +1,7 @@
+// jscs:disable maximumLineLength
+
 import React from 'react';
 import ResizableSvg from './ResizableSvg';
-
 
 export default React.createClass({
   mixins: [ResizableSvg],
@@ -44,6 +45,6 @@ export default React.createClass({
           </g>
         </g>
       </svg>
-    )
+    );
   }
 });

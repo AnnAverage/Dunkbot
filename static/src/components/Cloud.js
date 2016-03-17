@@ -1,7 +1,9 @@
+// jscs:disable maximumLineLength
+
 import React from 'react';
 
-export default ({type, number}) => {
-  let depth = "0.2";
+export default ({ type, number }) => {
+  let depth = '0.2';
   let className = `cloud cloud-${number} layer`;
 
   if (type == 1) {
@@ -19,7 +21,7 @@ export default ({type, number}) => {
       </svg>
     );
   }
-  
+
   else if (type == 3) {
     return (
       <svg className={className} data-depth={depth} xmlns="http://www.w3.org/2000/svg" width="280" height="116">
@@ -35,4 +37,4 @@ export default ({type, number}) => {
       </svg>
     );
   }
-}
+};

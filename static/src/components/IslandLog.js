@@ -1,3 +1,5 @@
+// jscs:disable maximumLineLength
+
 import React from 'react';
 
 export default () => (

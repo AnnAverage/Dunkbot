@@ -1,36 +1,46 @@
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+
 import EventEmitter from 'events';
 import dispatcher from '../dispatcher';
 import Constants from '../Constants';
 
+let count = 0;
+let uniqueUsers = 0;
+let uniqueGuilds = 0;
+let uniqueChannels = 0;
+let secretCount = 0;
+let shouldShowStatsPanel = false;
+
 class AirhornStatsStore extends EventEmitter {
   constructor() {
     super();
-    this._count = 0;
-    this._uniqueUsers = 0;
-    this._uniqueGuilds = 0;
-    this._uniqueChannels = 0;
-    this._secretCount = 0;
-    this._shouldShowStatsPanel = false;
 
-    let eventSource = new EventSource("/events");
+    let eventSource = new EventSource('/events');
     eventSource.onmessage = this.recievedMessage.bind(this);
   }
 
   fakeData() {
     setInterval(() => {
-      let count = Math.random();
-      let uniqueUsers = Math.random();
-      let uniqueGuilds = Math.random();
-      let uniqueChannels = Math.random();
-      let secretCount = Math.random();
+      let countRnd = Math.random();
+      let uniqueUsersRnd = Math.random();
+      let uniqueGuildsRnd = Math.random();
+      let uniqueChannelsRnd = Math.random();
+      let secretCountRnd = Math.random();
 
       this.recievedMessage({
         data: JSON.stringify({
-          total: count > 0.001 ? this._count+1 : this._count,
-          unique_users: uniqueUsers > 0.8 || this._uniqueUsers <= this._uniqueChannels ? Number.parseInt(this._uniqueUsers) + 1 : this._uniqueUsers,
-          unique_guilds: uniqueGuilds > 0.95 || this._uniqueGuilds == 0 ? Number.parseInt(this._uniqueGuilds) + 1 : this._uniqueGuilds,
-          unique_channels: uniqueChannels > 0.9 || this._uniqueChannels == 0 || this._uniqueChannels <= this._uniqueGuilds ? Number.parseInt(this._uniqueChannels) + 1 : this._uniqueChannels,
-          secret_count: secretCount > 0.95 ? Number.parseInt(this._secretCount) + 1 : this._secretCount
+          total: countRnd > 0.001 ? count + 1 : count,
+
+          unique_users: uniqueUsersRnd > 0.8 || uniqueUsers <= uniqueChannels ?
+            Number.parseInt(uniqueUsers) + 1 : uniqueUsers,
+
+          unique_guilds: uniqueGuildsRnd > 0.95 || uniqueGuilds == 0 ?
+            Number.parseInt(uniqueGuilds) + 1 : uniqueGuilds,
+
+          unique_channels: uniqueChannelsRnd > 0.9 || uniqueChannels == 0 ||
+            uniqueChannels <= uniqueGuilds ? Number.parseInt(uniqueChannels) + 1 : uniqueChannels,
+
+          secret_count: secretCountRnd > 0.95 ? Number.parseInt(secretCount) + 1 : secretCount
         })
       });
     }, 1000);
@@ -38,54 +48,55 @@ class AirhornStatsStore extends EventEmitter {
 
   recievedMessage(event) {
     let data = JSON.parse(event.data);
-    this._count = data.total || 0;
-    this._uniqueUsers = data.unique_users || 0;
-    this._uniqueGuilds = data.unique_guilds || 0;
-    this._uniqueChannels = data.unique_channels || 0;
-    this._secretCount = data.secret_count || 0;
+    count = data.total || 0;
+    uniqueUsers = data.unique_users || 0;
+    uniqueGuilds = data.unique_guilds || 0;
+    uniqueChannels = data.unique_channels || 0;
+    secretCount = data.secret_count || 0;
     this.emit('change');
   }
 
   showStatsPanel() {
-    this._shouldShowStatsPanel = true;
+    shouldShowStatsPanel = true;
     this.emit('change');
   }
 
   hideStatsPanel() {
-    this._shouldShowStatsPanel = false;
+    shouldShowStatsPanel = false;
     this.emit('change');
   }
 
   getCount() {
-    return this._count;
+    return count;
   }
 
   getUniqueUsers() {
-    return this._uniqueUsers;
+    return uniqueUsers;
   }
 
   getUniqueGuilds() {
-    return this._uniqueGuilds;
+    return uniqueGuilds;
   }
 
   getUniqueChannels() {
-    return this._uniqueChannels;
+    return uniqueChannels;
   }
 
   getSecretCount() {
-    return this._secretCount;
+    return secretCount;
   }
 
   shouldShowStatsPanel() {
-    return this._shouldShowStatsPanel;
+    return shouldShowStatsPanel;
   }
 
-  handle({type}) {
-    switch(type) {
+  handle({ type }) {
+    switch (type) {
       case Constants.Event.STATS_PANEL_SHOW: {
         this.showStatsPanel();
         break;
       }
+
       case Constants.Event.STATS_PANEL_HIDE: {
         this.hideStatsPanel();
         break;

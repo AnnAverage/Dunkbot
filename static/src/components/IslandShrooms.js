@@ -1,10 +1,13 @@
+// jscs:disable maximumLineLength
+
 import React from 'react';
 
-export default ({number}) => {
-  let className = 'island shrooms'
+export default ({ number }) => {
+  let className = 'island shrooms';
   if (number) {
     className += `-${number}`;
   }
+
   return (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="259" height="252">
       <g fill="none" fill-rule="evenodd">
@@ -37,4 +40,4 @@ export default ({number}) => {
       </g>
     </svg>
   );
-}
+};

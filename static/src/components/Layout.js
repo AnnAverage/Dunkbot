@@ -1,3 +1,5 @@
+/* @flow */
+
 import React from 'react';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
 import Cloud from './Cloud';
@@ -16,7 +18,7 @@ import Constants from '../Constants';
 
 import '../style/style.styl';
 
-const Footer = ({count, changeCount}) => (
+const Footer = ({ count, changeCount }) => (
   <div className="footer">
     <div className="airhorn-count">
       <div className="airhorn-count-content" onClick={StatsActions.showStatsPanel}>
@@ -35,10 +37,12 @@ const Footer = ({count, changeCount}) => (
   </div>
 );
 
-const Content = ({addBtnClick}) => (
+const Content = ({ addBtnClick }) => (
   <div className="content">
     <h1 className="title">!airhorn</h1>
-    <p className="message">The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want</p>
+    <p className="message">
+      The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want
+    </p>
     <video preload className="video-airhorn" id="video-airhorn">
       <source src={Constants.Video.AIRHORN} type="video/mp4" />
     </video>
@@ -47,7 +51,7 @@ const Content = ({addBtnClick}) => (
   </div>
 );
 
-const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show}) => {
+const StatsPanel = ({ count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show }) => {
   if (show) {
     return (
         <div className="stats-panel">
@@ -77,7 +81,7 @@ const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCou
   else {
     return <noscript />;
   }
-}
+};
 
 const Layout = React.createClass({
 
@@ -97,20 +101,19 @@ const Layout = React.createClass({
     this.smallIslandTypes = [];
     this.cloudTypes = [];
 
-    for (let i=0; i<Constants.SMALL_ISLAND_COUNT; i++) {
+    for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
       this.smallIslandTypes.push(Math.floor((Math.random() * 6) + 1));
     }
 
-    for (let i=0; i<Constants.CLOUD_COUNT / 2; i++) {
+    for (let i = 0; i < Constants.CLOUD_COUNT / 2; i++) {
       this.cloudTypes.push(i);
     }
 
-    for (let i=0; i<Constants.CLOUD_COUNT / 2; i++) {
+    for (let i = 0; i < Constants.CLOUD_COUNT / 2; i++) {
       this.cloudTypes.push(i);
     }
 
     AirhornStatsStore.on('change', this.updateStats);
-
     document.addEventListener('click', this.onDocumentClick);
   },
 
@@ -132,7 +135,7 @@ const Layout = React.createClass({
   },
 
   startOAuth() {
-    window.location = '/login';
+    //window.location = '/login';
   },
 
   updateStats() {
@@ -147,7 +150,9 @@ const Layout = React.createClass({
     });
 
     clearTimeout(this.changeCountTimeout);
-    this.changeCountTimeout = setTimeout(this.finishChangeCountAnimation, Constants.Animation.COUNT_CHANGE_TIME);
+    this.changeCountTimeout = setTimeout(
+      this.finishChangeCountAnimation,
+      Constants.Animation.COUNT_CHANGE_TIME);
   },
 
   finishChangeCountAnimation() {
@@ -158,15 +163,15 @@ const Layout = React.createClass({
 
   render() {
     let smallIslands = [];
-    for (let i=1; i<=Constants.SMALL_ISLAND_COUNT; i++) {
+    for (let i = 1; i <= Constants.SMALL_ISLAND_COUNT; i++) {
       let type = this.smallIslandTypes[i - 1];
-      smallIslands.push(<IslandSmall number={i} key={i} type={type} />)
+      smallIslands.push(<IslandSmall number={i} key={i} type={type} />);
     }
 
     let clouds = [];
-    for (let i=1; i<=Constants.CLOUD_COUNT; i++) {
+    for (let i = 1; i <= Constants.CLOUD_COUNT; i++) {
       let type = this.cloudTypes[i - 1];
-      clouds.push(<Cloud type={type} number={i} key={i} />)
+      clouds.push(<Cloud type={type} number={i} key={i} />);
     }
 
     return (
@@ -198,7 +203,7 @@ const Layout = React.createClass({
             uniqueChannels={this.state.uniqueChannels}
             secretCount={this.state.secretCount} />
         </div>
-        <Footer count={this.state.count} changeCount={this.state.changeCount} /> 
+        <Footer count={this.state.count} changeCount={this.state.changeCount} />
       </div>
     );
   }

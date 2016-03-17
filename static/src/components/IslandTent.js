@@ -1,12 +1,14 @@
+// jscs:disable maximumLineLength
+
 import React from 'react';
 import ResizableSvg from './ResizableSvg';
-
 
 export default React.createClass({
   mixins: [ResizableSvg],
 
   render() {
     let viewBox = this.getViewBox(259, 228);
+
     return (
         <svg className="island tent" xmlns="http://www.w3.org/2000/svg" width="259" height="228" viewBox={viewBox}>
         <g fill="none" fill-rule="evenodd">
@@ -65,6 +67,6 @@ export default React.createClass({
           </g>
         </g>
       </svg>
-    )
+    );
   }
 });

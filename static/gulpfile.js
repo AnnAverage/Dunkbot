@@ -7,6 +7,20 @@ const path = require('path');
 const fs = require('fs');
 const del = require('del');
 const nib = require('nib');
+const ReactDOMServer = require('react-dom/server');
+const htmlreplace = require('gulp-html-replace');
+const rename = require('gulp-rename');
+const React = require('react');
+
+const FOLDER_SRC = path.resolve('./src');
+const FOLDER_DIST = path.resolve('./dist');
+const PATH_ENTRY = path.join(FOLDER_SRC, 'app');
+const PATH_LAYOUT = path.join(FOLDER_SRC, 'components/Layout');
+const PATH_WEBPACK = path.join(FOLDER_SRC, 'webpack');
+
+const babelOptions = {
+  presets: ['es2015', 'react']
+}
 
 gulp.task('default', ['dev']);
 
@@ -14,27 +28,24 @@ function getWebpackOptions(debug) {
   let options = {
     entry: {
       app: [
-        './src/app'
+        PATH_ENTRY
       ]
     },
     output: {
-      path: path.resolve('./dist'),
+      path: FOLDER_DIST,
       filename: '[name].js'
     },
     module: {
       loaders: [
-        {test: /.html$/, loader: 'file', query: {name: '[name].html'}},
-        {test: /.(styl|css)$/, exclude: /node_modules/, loader: 'style!css!stylus'},
         {test: /\.js$/, exclude: /node_modules/, loader: 'react-hot'},
         {
           test: /\.js$/,
           exclude: /node_modules/,
           loader: 'babel',
-          query: {
-            presets: ['es2015', 'react']
-          }
+          query: babelOptions
         },
-        {test: /\.(png|svg|ogv|mp4|wav)$/, loader: 'file'}
+        {test: /\.(png|svg|ogv|mp4|wav)$/, loader: 'file'},
+        {test: /\.(styl|css)$/, loader: 'style!css!stylus'}
       ]
     },
     stylus: {
@@ -50,7 +61,7 @@ function getWebpackOptions(debug) {
   if (debug) {
     options.debug = true;
     options.devtool = 'source-map';
-    options.entry.app.unshift('webpack-dev-server/client?http://localhost:8000', './src/webpack');
+    options.entry.app.unshift('webpack-dev-server/client?http://localhost:8000', PATH_WEBPACK);
   }
 
   return options;
@@ -58,7 +69,7 @@ function getWebpackOptions(debug) {
 
 gulp.task('dev', () => {
   new WebpackDevServer(webpack(getWebpackOptions(true)), {
-    contentBase: './src',
+    contentBase: FOLDER_SRC,
     hot: true,
     inline: true,
     watchOptions: {
@@ -86,11 +97,57 @@ gulp.task('build', ['clean'], () => {
       console.log(err)
     }
   });
-
-  gulp.src('src/**/*.html')
-    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('clean', () => {
-  return del('./dist');
+  return del(FOLDER_DIST);
 });
+
+gulp.task('dist', ['build'], () => {
+  require('react');
+  require('babel-register')(babelOptions);
+  require.extensions['.svg'] = () => {};
+  require.extensions['.png'] = () => {};
+  require.extensions['.mp4'] = () => {};
+  require.extensions['.wav'] = () => {};
+  require.extensions['.styl'] = () => {};
+
+  createGlobals();
+
+  function render(src, dst, content) {
+    return gulp.src(src, { cwd: FOLDER_SRC })
+      .pipe(htmlreplace({
+        mount: {
+          src: '',
+          tpl: content,
+        },
+      }))
+      .pipe(rename(dst))
+      .pipe(gulp.dest(FOLDER_DIST));
+  }
+
+  const Layout = require(PATH_LAYOUT).default;
+  const content = ReactDOMServer.renderToString(React.createElement(Layout));
+  return render('index.html', 'index.html', content);
+});
+
+function createGlobals() {
+  global.window = {
+    matchMedia() {
+      return {matches: false};
+    }
+  };
+
+  global.document = {
+    addEventListener() {}
+  };
+
+  global.navigator = {
+    userAgent: {
+      match() {}
+    }
+  };
+
+  global.Parallax = function() {};
+  global.EventSource = function() {};
+}

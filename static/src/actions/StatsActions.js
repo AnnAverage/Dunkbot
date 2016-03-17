@@ -3,12 +3,12 @@ import Constants from '../Constants';
 
 export function showStatsPanel() {
   dispatcher.dispatch({
-    type: Constants.Event.STATS_PANEL_SHOW
+    type: Constants.Event.STATS_PANEL_SHOW,
   });
 }
 
 export function hideStatsPanel() {
   dispatcher.dispatch({
-    type: Constants.Event.STATS_PANEL_HIDE
+    type: Constants.Event.STATS_PANEL_HIDE,
   });
 }

@@ -277,7 +277,7 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 	}).Info("Playing sound")
 
 	if vc == nil {
-		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
+		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false, 5000)
 		vc.Receive = false
 		if err != nil {
 			log.WithFields(log.Fields{
@@ -331,12 +331,6 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 			s.ChannelMessageSend(channel.ID, "**AIRHORN BOT READY FOR HORNING. TYPE `!AIRHORN` IN CHAT TO ACTIVATE**")
 			return
 		}
-	}
-}
-
-func onReady(s *discordgo.Session, r *discordgo.Ready) {
-	for _, guild := range r.Guilds {
-		s.GuildLeave(guild.ID)
 	}
 }
 
@@ -416,7 +410,6 @@ func main() {
 		return
 	}
 
-	discord.AddHandler(onReady)
 	discord.AddHandler(onGuildCreate)
 	discord.AddHandler(onMessageCreate)
 

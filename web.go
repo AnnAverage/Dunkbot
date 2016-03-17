@@ -8,6 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/antage/eventsource"
 	"github.com/bwmarrin/discordgo"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 	redis "gopkg.in/redis.v3"
@@ -263,11 +264,12 @@ func handleMe(w http.ResponseWriter, r *http.Request) {
 }
 
 func server() {
-	http.HandleFunc("/", handleIndex)
-	http.HandleFunc("/me", handleMe)
-	http.HandleFunc("/login", handleLogin)
-	http.HandleFunc("/callback", handleCallback)
-	http.Handle("/events", es)
+	server := http.NewServeMux()
+	server.HandleFunc("/", handleIndex)
+	server.HandleFunc("/me", handleMe)
+	server.HandleFunc("/login", handleLogin)
+	server.HandleFunc("/callback", handleCallback)
+	server.Handle("/events", es)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -277,7 +279,18 @@ func server() {
 	log.WithFields(log.Fields{
 		"port": port,
 	}).Info("Starting HTTP Server")
-	http.ListenAndServe(":"+port, nil)
+
+	logFile, err := os.OpenFile("requests.log", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("Failed to open requests log file")
+		return
+	}
+	defer logFile.Close()
+
+	loggedRouter := handlers.LoggingHandler(logFile, server)
+	http.ListenAndServe(":"+port, loggedRouter)
 }
 
 func broadcastLoop() {

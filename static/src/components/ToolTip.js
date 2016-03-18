@@ -6,8 +6,6 @@ const ToolTip = React.createClass({
     if (this.refs.toolTip && this.props.element) {
       let elemRect = this.props.element.getBoundingClientRect();
       let toolTipRect = this.refs.toolTip.getBoundingClientRect();
-      //let style = {left: left - 23, top: -4};
-      // 193 + 11
       let left = elemRect.left - (toolTipRect.width / 2) + (elemRect.width / 2);
 
       style = {left};

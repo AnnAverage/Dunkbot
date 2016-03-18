@@ -1,6 +1,5 @@
 import React from 'react';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
-import OAuthStore from '../stores/OAuthStore';
 import Cloud from './Cloud';
 import IslandPond from './islands/IslandPond';
 import IslandTree from './islands/IslandTree';
@@ -11,65 +10,13 @@ import IslandForest from './islands/IslandForest';
 import IslandLog from './islands/IslandLog';
 import IslandShrooms from './islands/IslandShrooms';
 import IslandSmall from './islands/IslandSmall';
+import Content from './Content';
 import Footer from './Footer';
+import StatsPanel from './StatsPanel';
 import Parallax from '../libs/Parallax';
-import numeral from 'numeral';
-import * as StatsActions from '../actions/StatsActions';
-import * as OAuthActions from '../actions/OAuthActions';
 import Constants from '../Constants';
 
 import '../style/style.styl';
-
-const Content = () => (
-  <div className="content">
-    <h1 className="title">!airhorn</h1>
-    <p className="message">
-      The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want
-    </p>
-    <video preload className="video-airhorn" id="video-airhorn">
-      <source src={Constants.Video.AIRHORN} type="video/mp4" />
-    </video>
-    <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" id="audio-airhorn" />
-    <a className="add-btn" onClick={OAuthActions.start}>Add to Discord</a>
-  </div>
-);
-
-const StatsRow = ({icon, label, value}) => {
-  return (
-    <div className="stats-row">
-      <img src={icon} />
-      <div className="label-value">
-        <div className="value">{numeral(value).format('0,0')}</div>
-        <div className="label">{label}</div>
-      </div>
-    </div>
-  );
-};
-
-const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show, hasBeenShown}) => {
-  if (!hasBeenShown) {
-    return <noscript />;
-  }
-
-  let classes = 'stats-panel';
-  if (show) {
-    classes += 'crossfade one';
-  }
-  else {
-    classes += 'crossfade two';
-  }
-
-  return (
-    <div className={`stats-panel crossfade ${show ? 'one' : 'one-reverse'}`}>
-      <img src={Constants.Image.ICON_CLOSE} className="icon-close" onClick={StatsActions.hideStatsPanel} />
-      <StatsRow icon={Constants.Image.ICON_PLAYS} label="Plays" value={count} />
-      <StatsRow icon={Constants.Image.ICON_USERS} label="Unique Users" value={uniqueUsers} />
-      <StatsRow icon={Constants.Image.ICON_SERVERS} label="Unique Servers" value={uniqueGuilds} />
-      <StatsRow icon={Constants.Image.ICON_CHANNELS} label="Unique Channels" value={uniqueChannels} />
-      <StatsRow icon={Constants.Image.ICON_SECERT} label="Secret Plays" value={secretCount} />
-    </div>
-  );
-};
 
 const Layout = React.createClass({
   getInitialState() {
@@ -86,32 +33,12 @@ const Layout = React.createClass({
   },
 
   componentWillMount() {
-    this.smallIslandTypes = [];
-    this.cloudTypes = [];
-
-    for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
-      this.smallIslandTypes.push(i % Constants.UNIQUE_SMALL_ISLAND_COUNT);
-    }
-
-    for (let i = 0; i < Constants.CLOUD_COUNT; i++) {
-      this.cloudTypes.push(i % Constants.UNIQUE_CLOUD_COUNT);
-    }
-
     AirhornStatsStore.on('change', this.updateStats);
-    OAuthStore.on('change', this.playVideo);
   },
 
   componentDidMount() {
-    let scene = document.getElementById('parallax');
+    const scene = document.getElementById('parallax');
     new Parallax(scene);
-  },
-
-  playVideo() {
-    if (OAuthStore.shouldPlayVideo()) {
-      document.getElementById('video-airhorn').play();
-      document.getElementById('audio-airhorn').play();
-      OAuthActions.playedVideo();
-    }
   },
 
   updateStats() {
@@ -139,16 +66,16 @@ const Layout = React.createClass({
   },
 
   render() {
-    let smallIslands = [];
-    for (let i = 1; i <= Constants.SMALL_ISLAND_COUNT; i++) {
-      let type = this.smallIslandTypes[i - 1];
-      smallIslands.push(<IslandSmall number={i} key={i} type={type} />);
+    const smallIslands = [];
+    for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
+      const type = i % Constants.UNIQUE_SMALL_ISLAND_COUNT;
+      smallIslands.push(<IslandSmall number={i} type={type} key={i} />);
     }
 
-    let clouds = [];
-    for (let i = 1; i <= Constants.CLOUD_COUNT; i++) {
-      let type = this.cloudTypes[i - 1];
-      clouds.push(<Cloud type={type} number={i} key={i} />);
+    const clouds = [];
+    for (let i = 0; i < Constants.CLOUD_COUNT; i++) {
+      const type = i % Constants.UNIQUE_CLOUD_COUNT;
+      clouds.push(<Cloud number={i} type={type} key={i} />);
     }
 
     return (

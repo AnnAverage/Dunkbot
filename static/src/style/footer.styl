@@ -1,0 +1,63 @@
+@require 'variables';
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  opacity: 0.98;
+  padding: 18px 20px;
+  font-size: 18px;
+  line-height: 24px;
+  box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, .1);
+
+  .airhorn-count {
+    flex: 0.5;
+    
+    .airhorn-count-content {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 500;
+      width: 170px;
+      
+      &:hover .count, &:hover .and-counting {
+        text-decoration: underline;
+      }
+      
+      .count-text {
+        margin-left: 10px;
+
+        .count {
+          display: flex;
+          justify-content: center;
+          color: color-medium-gray;
+          transition: all 0.2s ease;
+          
+          &.count-big {
+            font-size: 18px;
+          }
+        }
+        
+        .and-counting {
+          color: color-lightest-gray;
+        }
+      }
+    }
+  }
+
+  .main-text, a {
+    text-align: center;
+    color: color-brown;
+    align-self: center;
+  
+    .arrow {
+      text-decoration: none;
+    }
+  }
+}

@@ -6,3 +6,5 @@ app/settings.py
 airhornbot
 airhornweb
 requests.log
+dist
+node_modules

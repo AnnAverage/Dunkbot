@@ -1,0 +1,90 @@
+@media (max-width: 920px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    
+    .airhorn-count {
+      margin-bottom: 28px;
+    }
+  }
+  
+  .stats-panel {
+    left: 20px;
+    right: 20px;
+    margin-left: 0px;
+    bottom: 132px + stats-panel-arrow-size + stats-panel-offset;
+  }
+  
+  .island {
+    &.pond {
+      left: -271px;
+      top: -204px;
+    }
+  
+    &.trees {
+      left: 744px;
+      top: -190px;
+    }
+    
+    &.tent {
+      left: 536px;
+      top: 570px;
+    }
+  
+  
+    &:not(.pond):not(.trees):not(.tent):not(.small-island):not(.tree) {
+      visibility: hidden;
+      opacity: 0;
+    }
+    
+    &.small-island {
+      &.small-1 {
+        left: 538px;
+        top: -194px;
+      }
+
+      &.small-3 {
+        left: -184px;
+        top: 310px;
+      }
+      
+      &.small-10 {
+        left: 745px;
+        top: 390px;
+      }
+      
+      &:not(.small-1):not(.small-3):not(.small-10) {
+        visibility: hidden;
+        opacity: 0;
+      }
+    }  
+  }}
+  
+@media (max-width: 690px) {
+  .video-airhorn {
+    max-width: 90%;
+  }
+  
+  .island {
+    &.tree {
+      width: calc(@width / 2);
+      height: calc(@height / 2);
+      background-size: @height @width;
+      visibility: visible;
+      opacity: 1;
+      left: -50px;
+      top: 340px;
+    }
+    
+    &.tent {
+      left: 580px;
+      top: 580px;
+    }
+  }
+}
+
+@media (max-width: 606px) {
+  .stats-panel {
+    bottom: 156px + stats-panel-arrow-size + stats-panel-offset;
+  }
+}

@@ -8,6 +8,13 @@ export default {
 
   Image: {
     AIRHORN_COUNTER: require('./images/airhorn-counter.svg'),
+    ICON_PLAYS: require('./images/icon-plays.svg'),
+    ICON_USERS: require('./images/icon-users.svg'),
+    ICON_SERVERS: require('./images/icon-servers.svg'),
+    ICON_CHANNELS: require('./images/icon-channels.svg'),
+    ICON_SECERT: require('./images/icon-secret.svg'),
+    ICON_CLOSE: require('./images/icon-close.svg'),
+    ICON_ABOUT: require('./images/icon-about.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
     ISLAND_SMALL_2: require('./images/island-small-02.png'),
     ISLAND_SMALL_3: require('./images/island-small-03.png'),
@@ -30,7 +37,12 @@ export default {
 
   Event: {
     STATS_PANEL_SHOW: 'EVENT_STATS_PANEL_SHOW',
-    STATS_PANEL_HIDE: 'EVENT_STATS_PANEL_HIDE'
+    STATS_PANEL_HIDE: 'EVENT_STATS_PANEL_HIDE',
+    STATS_PANEL_TOGGLE: 'EVENT_STATS_PANEL_TOGGLE',
+
+    OAUTH_START: 'EVENT_OAUTH_START',
+    OAUTH_END: 'EVENT_OAUTH_END',
+    OAUTH_PLAYED_VIDEO: 'EVENT_OAUTH_PLAYED_VIDEO'
   },
 
   MediaQuery: {

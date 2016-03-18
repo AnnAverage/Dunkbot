@@ -66,6 +66,11 @@ class AirhornStatsStore extends EventEmitter {
     this.emit('change');
   }
 
+  toggleStatusPanel() {
+    shouldShowStatsPanel = !shouldShowStatsPanel;
+    this.emit('change');
+  }
+
   getCount() {
     return count;
   }
@@ -90,7 +95,7 @@ class AirhornStatsStore extends EventEmitter {
     return shouldShowStatsPanel;
   }
 
-  handle({ type }) {
+  handle({type}) {
     switch (type) {
       case Constants.Event.STATS_PANEL_SHOW: {
         this.showStatsPanel();
@@ -99,6 +104,11 @@ class AirhornStatsStore extends EventEmitter {
 
       case Constants.Event.STATS_PANEL_HIDE: {
         this.hideStatsPanel();
+        break;
+      }
+
+      case Constants.Event.STATS_PANEL_TOGGLE: {
+        this.toggleStatusPanel();
         break;
       }
     }

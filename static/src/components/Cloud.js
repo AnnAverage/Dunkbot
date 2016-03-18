@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default ({ type, number }) => {
+export default ({type, number}) => {
   let depth = '0.2';
   let className = `cloud cloud-${number} layer`;
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default ({ number }) => {
+export default ({number}) => {
   let className = 'island shrooms';
   if (number) {
     className += `-${number}`;

@@ -4,19 +4,21 @@ import EventEmitter from 'events';
 import dispatcher from '../dispatcher';
 import Constants from '../Constants';
 
-let count = 0;
-let uniqueUsers = 0;
-let uniqueGuilds = 0;
-let uniqueChannels = 0;
-let secretCount = 0;
+let count = 99922456700;
+let uniqueUsers = 22022456700;
+let uniqueGuilds = 2456700;
+let uniqueChannels = 456700;
+let secretCount = 6700;
 let shouldShowStatsPanel = false;
 
 class AirhornStatsStore extends EventEmitter {
   constructor() {
     super();
 
-    let eventSource = new EventSource('/events');
-    eventSource.onmessage = this.receivedMessage.bind(this);
+    //let eventSource = new EventSource('/events');
+    //eventSource.onmessage = this.receivedMessage.bind(this);
+
+    this.fakeData();
   }
 
   fakeData() {
@@ -66,6 +68,11 @@ class AirhornStatsStore extends EventEmitter {
     this.emit('change');
   }
 
+  toggleStatusPanel() {
+    shouldShowStatsPanel = !shouldShowStatsPanel;
+    this.emit('change');
+  }
+
   getCount() {
     return count;
   }
@@ -90,7 +97,7 @@ class AirhornStatsStore extends EventEmitter {
     return shouldShowStatsPanel;
   }
 
-  handle({ type }) {
+  handle({type}) {
     switch (type) {
       case Constants.Event.STATS_PANEL_SHOW: {
         this.showStatsPanel();
@@ -99,6 +106,11 @@ class AirhornStatsStore extends EventEmitter {
 
       case Constants.Event.STATS_PANEL_HIDE: {
         this.hideStatsPanel();
+        break;
+      }
+
+      case Constants.Event.STATS_PANEL_TOGGLE: {
+        this.toggleStatusPanel();
         break;
       }
     }

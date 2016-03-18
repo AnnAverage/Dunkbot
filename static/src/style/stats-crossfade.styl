@@ -1,0 +1,71 @@
+offset = 248px;
+
+.crossfade {
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+
+  &.one {
+    animation-name: crossfade-one;
+    opacity: 1;
+  }
+
+  &.two {
+    animation-name: crossfade-two;
+    opacity: 0;
+  }
+
+  &.one-reverse {
+    animation-name: crossfade-one-reverse;
+    opacity: 0;
+  }
+
+  &.two-reverse {
+    animation-name: crossfade-two-reverse;
+    opacity: 1;
+  }
+}
+
+@keyframes crossfade-one {
+  0% {
+    transform: translate3d(0px, offset, 0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
+}
+
+@keyframes crossfade-two {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0px, - offset, 0px);
+    opacity: 0;
+  }
+}
+
+@keyframes crossfade-one-reverse {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0px, offset, 0px);
+    opacity: 0;
+  }
+}
+
+@keyframes crossfade-two-reverse {
+  0% {
+    transform: translate3d(0px, - offset, 0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
+}

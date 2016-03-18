@@ -13,31 +13,53 @@ import IslandLog from './islands/IslandLog';
 import IslandShrooms from './islands/IslandShrooms';
 import IslandSmall from './islands/IslandSmall';
 import Parallax from '../libs/Parallax';
+import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
 import Constants from '../Constants';
 
 import '../style/style.styl';
 
-const Footer = ({ count, changeCount }) => (
-  <div className="footer">
-    <div className="airhorn-count">
-      <div className="airhorn-count-content" onClick={StatsActions.showStatsPanel}>
-        <img src={Constants.Image.AIRHORN_COUNTER} />
-        <div className="count-text">
-          <div className={`count ${changeCount ? 'count-big' : ''}`}>{count}</div>
-          <div className="and-counting">and counting</div>
+const Footer = ({count, changeCount, showStatsPanel, statsHasBeenShown}) => {
+  let statsBtnClasses = 'crossfade';
+  if (statsHasBeenShown) {
+    if (showStatsPanel) {
+      statsBtnClasses += ' two';
+    }
+    else {
+      statsBtnClasses += ' two-reverse';
+    }
+  }
+
+  return (
+    <div className="footer">
+      <div className="airhorn-count">
+        <div className="stats-toggler" onClick={StatsActions.toggleStatsPanel}>
+          <div className="airhorn-count-content">
+            <img src={Constants.Image.AIRHORN_COUNTER} />
+            <div className="count-text">
+              <div className={`count ${changeCount ? 'count-big' : ''}`}>
+                {numeral(count).format('0,0')}
+              </div>
+              <div className="and-counting">and counting</div>
+            </div>
+          </div>
+          <div className='stats-btn'>
+        </div>
+          <img src={Constants.Image.ICON_ABOUT} className={statsBtnClasses} />
         </div>
       </div>
+      <div className="main-text">
+        <span className="normal-text">
+          Open sourced by the team at Discord. Contribute yourself on&nbsp;
+        </span>
+        <a href={Constants.GITHUB_URL}>GitHub</a>
+        <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
+      </div>
     </div>
-    <div className="main-text">
-      Open sourced by the team at Discord. Contribute yourself on&nbsp;
-      <a href={Constants.GITHUB_URL}>GitHub</a>
-      <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
-    </div>
-  </div>
-);
+  );
+};
 
-const Content = ({ addBtnClick }) => (
+const Content = ({addBtnClick}) => (
   <div className="content">
     <h1 className="title">!airhorn</h1>
     <p className="message">
@@ -51,36 +73,41 @@ const Content = ({ addBtnClick }) => (
   </div>
 );
 
-const StatsPanel = ({ count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show }) => {
-  if (show) {
-    return (
-        <div className="stats-panel">
-          <div className="stats-content">
-            <div className="close-btn-container">
-              <span className="close-btn" onClick={StatsActions.hideStatsPanel}>✖</span>
-            </div>
-            <div>
-              <label>Count: </label>{count}
-            </div>
-            <div>
-              <label>Unique users: </label>{uniqueUsers}
-            </div>
-            <div>
-            <label>Unique guilds: </label>{uniqueGuilds}
-            </div>
-            <div>
-            <label>Unique channels: </label>{uniqueChannels}
-            </div>
-          <div>
-            <label>Secret count: </label>{secretCount}
-          </div>
-        </div>
+const StatsRow = ({icon, label, value}) => {
+  return (
+    <div className="stats-row">
+      <img src={icon} />
+      <div className="label-value">
+        <div className="value">{numeral(value).format('0,0')}</div>
+        <div className="label">{label}</div>
       </div>
-    );
-  }
-  else {
+    </div>
+  );
+};
+
+const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show, hasBeenShown}) => {
+  if (!hasBeenShown) {
     return <noscript />;
   }
+
+  let classes = 'stats-panel';
+  if (show) {
+    classes += 'crossfade one';
+  }
+  else {
+    classes += 'crossfade two';
+  }
+
+  return (
+    <div className={`stats-panel crossfade ${show ? 'one' : 'one-reverse'}`}>
+      <img src={Constants.Image.ICON_CLOSE} className="icon-close" onClick={StatsActions.hideStatsPanel} />
+      <StatsRow icon={Constants.Image.ICON_PLAYS} label="Plays" value={count} />
+      <StatsRow icon={Constants.Image.ICON_USERS} label="Unique Users" value={uniqueUsers} />
+      <StatsRow icon={Constants.Image.ICON_SERVERS} label="Unique Servers" value={uniqueGuilds} />
+      <StatsRow icon={Constants.Image.ICON_CHANNELS} label="Unique Channels" value={uniqueChannels} />
+      <StatsRow icon={Constants.Image.ICON_SECERT} label="Secret Plays" value={secretCount} />
+    </div>
+  );
 };
 
 const Layout = React.createClass({
@@ -91,8 +118,9 @@ const Layout = React.createClass({
       uniqueGuilds: 0,
       uniqueChannels: 0,
       secretCount: 0,
-      changeCount: false,
-      showStats: false
+      showStats: false,
+      statsHasBeenShown: false,
+      changeCount: false
     };
   },
 
@@ -109,13 +137,6 @@ const Layout = React.createClass({
     }
 
     AirhornStatsStore.on('change', this.updateStats);
-    document.addEventListener('click', this.onDocumentClick);
-  },
-
-  onDocumentClick(event) {
-    if (!this.refs.statsPanel.contains(event.target)) {
-      StatsActions.hideStatsPanel();
-    }
   },
 
   componentDidMount() {
@@ -141,6 +162,7 @@ const Layout = React.createClass({
       uniqueChannels: AirhornStatsStore.getUniqueChannels(),
       secretCount: AirhornStatsStore.getSecretCount(),
       showStats: AirhornStatsStore.shouldShowStatsPanel(),
+      statsHasBeenShown: this.state.statsHasBeenShown || AirhornStatsStore.shouldShowStatsPanel(),
       changeCount: this.state.count != AirhornStatsStore.getCount()
     });
 
@@ -189,16 +211,19 @@ const Layout = React.createClass({
         <div id="parallax">
           {clouds}
         </div>
-        <div ref="statsPanel">
-          <StatsPanel
-            show={this.state.showStats}
-            count={this.state.count}
-            uniqueUsers={this.state.uniqueUsers}
-            uniqueGuilds={this.state.uniqueGuilds}
-            uniqueChannels={this.state.uniqueChannels}
-            secretCount={this.state.secretCount} />
-        </div>
-        <Footer count={this.state.count} changeCount={this.state.changeCount} />
+        <StatsPanel
+          show={this.state.showStats}
+          count={this.state.count}
+          uniqueUsers={this.state.uniqueUsers}
+          uniqueGuilds={this.state.uniqueGuilds}
+          uniqueChannels={this.state.uniqueChannels}
+          secretCount={this.state.secretCount}
+          hasBeenShown={this.state.statsHasBeenShown} />
+        <Footer
+          count={this.state.count}
+          changeCount={this.state.changeCount}
+          showStatsPanel={this.state.showStats}
+          statsHasBeenShown={this.state.statsHasBeenShown} />
       </div>
     );
   }

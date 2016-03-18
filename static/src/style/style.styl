@@ -2,6 +2,7 @@
 @require 'island';
 @require 'footer';
 @require 'stats-panel';
+@require 'stats-crossfade';
 @require 'responsive';
 
 body {
@@ -31,20 +32,20 @@ body {
   display: flex;
   flex-flow: column;
   align-items: center;
-  
+
   .title {
     color: color-dark-gray;
     font-size: 64px;
     line-height: 68px;
     margin: 0;
   }
-  
+
   .message {
     color: color-brown;
     font-size: 15px;
     line-height: 24px;
     opacity: 0.6;
-    
+
     a {
       color: color-brown;
     }
@@ -75,7 +76,7 @@ body {
   cursor: pointer;
   text-decoration: none;
   display: block;
-  
+
   &:hover {
     color: white;
     background-color: color-brown;

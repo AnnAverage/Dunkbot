@@ -8,6 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/antage/eventsource"
 	"github.com/bwmarrin/discordgo"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 	redis "gopkg.in/redis.v3"
@@ -20,14 +21,32 @@ import (
 )
 
 var (
-	rcli          *redis.Client
-	oauthConf     *oauth2.Config
-	store         *sessions.CookieStore
-	es            eventsource.EventSource
+	// Permission Constants
+	READ_MESSAGES = 1024
+	SEND_MESSAGES = 2048
+	CONNECT       = 1048576
+	SPEAK         = 2097152
+
+	// Redis client (for stats)
+	rcli *redis.Client
+
+	// Oauth2 Config
+	oauthConf *oauth2.Config
+
+	// Used for storing session information in a cookie
+	store *sessions.CookieStore
+
+	// Used for pushing live stat updates to the client
+	es eventsource.EventSource
+
+	// Source of the HTML page (cached in memory for performance)
 	htmlIndexPage string
-	apiBaseUrl    = "https://discordapp.com/api"
+
+	// Base URL of the discord API
+	apiBaseUrl = "https://discordapp.com/api"
 )
 
+// Represents a JSON struct of stats that are updated every second and pushed to the client
 type CountUpdate struct {
 	Total          string `json:"total"`
 	UniqueUsers    string `json:"unique_users"`
@@ -126,9 +145,12 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	session.Values["state"] = randSeq(32)
 	session.Save(r, w)
 
+	// OR the permissions we want
+	perms := READ_MESSAGES | SEND_MESSAGES | CONNECT | SPEAK
+
 	// Return a redirect to the ouath provider
 	url := oauthConf.AuthCodeURL(session.Values["state"].(string), oauth2.AccessTypeOnline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, url+fmt.Sprintf("&permissions=%v", perms), http.StatusTemporaryRedirect)
 }
 
 func handleCallback(w http.ResponseWriter, r *http.Request) {
@@ -242,11 +264,12 @@ func handleMe(w http.ResponseWriter, r *http.Request) {
 }
 
 func server() {
-	http.Handle("/", http.FileServer(http.Dir("static/dist")))
-	http.HandleFunc("/me", handleMe)
-	http.HandleFunc("/login", handleLogin)
-	http.HandleFunc("/discord_oauth_cb", handleCallback)
-	http.Handle("/events", es)
+	server := http.NewServeMux()
+	server.HandleFunc("/", handleIndex)
+	server.HandleFunc("/me", handleMe)
+	server.HandleFunc("/login", handleLogin)
+	server.HandleFunc("/callback", handleCallback)
+	server.Handle("/events", es)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -256,7 +279,18 @@ func server() {
 	log.WithFields(log.Fields{
 		"port": port,
 	}).Info("Starting HTTP Server")
-	http.ListenAndServe(":"+port, nil)
+
+	logFile, err := os.OpenFile("requests.log", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("Failed to open requests log file")
+		return
+	}
+	defer logFile.Close()
+
+	loggedRouter := handlers.LoggingHandler(logFile, server)
+	http.ListenAndServe(":"+port, loggedRouter)
 }
 
 func broadcastLoop() {
@@ -335,7 +369,7 @@ func main() {
 		ClientSecret: *ClientSecret,
 		Scopes:       []string{"bot", "identify"},
 		Endpoint:     endpoint,
-		RedirectURL:  "https://airhornbot.com/discord_oauth_cb",
+		RedirectURL:  "https://airhornbot.com/callback",
 	}
 
 	server()

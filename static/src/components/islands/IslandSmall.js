@@ -10,7 +10,7 @@ let islands = [
   Constants.Image.ISLAND_SMALL_6
 ];
 
-export default ({ type, number }) => {
+export default ({type, number}) => {
   let className = `island small-island small-${number}`;
   return <img className={className} src={islands[type]} />;
 };

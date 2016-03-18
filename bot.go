@@ -27,9 +27,14 @@ var (
 	queues map[string]chan *Play = make(map[string]chan *Play)
 
 	// Sound attributes
-	SOUND_RANGE    = 0
-	BITRATE        = 128
-	MAX_QUEUE_SIZE = 6
+	AIRHORN_SOUND_RANGE = 0
+	KHALED_SOUND_RANGE  = 0
+	BITRATE             = 128
+	MAX_QUEUE_SIZE      = 6
+
+	// Sound Types
+	TYPE_AIRHORN = 0
+	TYPE_KHALED  = 1
 )
 
 // Play represents an individual use of the !airhorn command
@@ -41,6 +46,9 @@ type Play struct {
 
 	// If true, this was a forced play using a specific airhorn sound name
 	Forced bool
+
+	// If true, we need to appreciate this value
+	Khaled bool
 }
 
 // Sound represents a sound clip
@@ -53,6 +61,9 @@ type Sound struct {
 	// Delay (in milliseconds) for the bot to wait before sending the disconnect request
 	PartDelay int
 
+	// Sound Type
+	Type int
+
 	// Channel used for the encoder routine
 	encodeChan chan []int16
 
@@ -60,32 +71,39 @@ type Sound struct {
 	buffer [][]byte
 }
 
-func createSound(Name string, Weight int, PartDelay int) *Sound {
+func createSound(Name string, Weight int, PartDelay int, Type int) *Sound {
 	return &Sound{
 		Name:       Name,
 		Weight:     Weight,
 		PartDelay:  PartDelay,
+		Type:       Type,
 		encodeChan: make(chan []int16, 10),
 		buffer:     make([][]byte, 0),
 	}
 }
 
 // Array of all the sounds we have
-var SOUNDS []*Sound = []*Sound{
-	createSound("default", 1000, 250),
-	createSound("reverb", 800, 250),
-	createSound("spam", 800, 0),
-	createSound("tripletap", 800, 250),
-	createSound("fourtap", 800, 250),
-	createSound("distant", 500, 250),
-	createSound("echo", 500, 250),
-	createSound("clownfull", 250, 250),
-	createSound("clownshort", 250, 250),
-	createSound("clownspam", 250, 0),
-	createSound("horn_highfartlong", 200, 250),
-	createSound("horn_highfartshort", 200, 250),
-	createSound("midshort", 100, 250),
-	createSound("truck", 10, 250),
+var AIRHORNS []*Sound = []*Sound{
+	createSound("default", 1000, 250, TYPE_AIRHORN),
+	createSound("reverb", 800, 250, TYPE_AIRHORN),
+	createSound("spam", 800, 0, TYPE_AIRHORN),
+	createSound("tripletap", 800, 250, TYPE_AIRHORN),
+	createSound("fourtap", 800, 250, TYPE_AIRHORN),
+	createSound("distant", 500, 250, TYPE_AIRHORN),
+	createSound("echo", 500, 250, TYPE_AIRHORN),
+	createSound("clownfull", 250, 250, TYPE_AIRHORN),
+	createSound("clownshort", 250, 250, TYPE_AIRHORN),
+	createSound("clownspam", 250, 0, TYPE_AIRHORN),
+	createSound("horn_highfartlong", 200, 250, TYPE_AIRHORN),
+	createSound("horn_highfartshort", 200, 250, TYPE_AIRHORN),
+	createSound("midshort", 100, 250, TYPE_AIRHORN),
+	createSound("truck", 10, 250, TYPE_AIRHORN),
+}
+
+var KHALED []*Sound = []*Sound{
+	createSound("one", 1, 250, TYPE_KHALED),
+	createSound("one_classic", 1, 250, TYPE_KHALED),
+	createSound("one_echo", 1, 250, TYPE_KHALED),
 }
 
 // Encode reads data from ffmpeg and encodes it using gopus
@@ -124,8 +142,14 @@ func (s *Sound) Load() error {
 	defer close(s.encodeChan)
 	go s.Encode()
 
-	ffmpeg := exec.Command("ffmpeg", "-i", "audio/airhorn_"+s.Name+".wav", "-vol", "256", "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
+	var path string
+	if s.Type == TYPE_AIRHORN {
+		path = fmt.Sprintf("audio/airhorn_%v.wav", s.Name)
+	} else {
+		path = fmt.Sprintf("audio/another_%v.wav", s.Name)
+	}
 
+	ffmpeg := exec.Command("ffmpeg", "-i", path, "-vol", "256", "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
 	stdout, err := ffmpeg.StdoutPipe()
 	if err != nil {
 		fmt.Println("StdoutPipe Error:", err)
@@ -186,23 +210,37 @@ func randomRange(min, max int) int {
 }
 
 // Returns a random sound
-func getRandomSound() *Sound {
+func getRandomSound(stype int) *Sound {
 	var i int
-	number := randomRange(0, SOUND_RANGE)
 
-	for _, item := range SOUNDS {
-		i += item.Weight
+	if stype == TYPE_AIRHORN {
+		number := randomRange(0, AIRHORN_SOUND_RANGE)
 
-		if number < i {
-			return item
+		for _, item := range AIRHORNS {
+			i += item.Weight
+
+			if number < i {
+				return item
+			}
 		}
+	} else {
+		number := randomRange(0, KHALED_SOUND_RANGE)
+
+		for _, item := range KHALED {
+			i += item.Weight
+
+			if number < i {
+				return item
+			}
+		}
+
 	}
 
 	return nil
 }
 
 // Enqueues a play into the ratelimit/buffer guild queue
-func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
+func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, isKhaled bool) {
 	// Grab the users voice channel
 	channel := getCurrentVoiceChannel(user, guild)
 	if channel == nil {
@@ -216,7 +254,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 	var forced bool = true
 	if sound == nil {
 		forced = false
-		sound = getRandomSound()
+		sound = getRandomSound(TYPE_AIRHORN)
 	}
 
 	play := &Play{
@@ -224,6 +262,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound) {
 		ChannelID: channel.ID,
 		Sound:     sound,
 		Forced:    forced,
+		Khaled:    isKhaled,
 	}
 
 	// Check if we already have a connection to this guild
@@ -277,33 +316,44 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 	}).Info("Playing sound")
 
 	if vc == nil {
-		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false, 5000)
-		vc.Receive = false
+		vc, err = discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, false, false)
+		// vc.Receive = false
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,
 			}).Error("Failed to play sound")
-		}
-
-		err = vc.WaitUntilConnected()
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-				"play":  play,
-			}).Error("Failed to join voice channel")
-			vc.Close()
 			delete(queues, play.GuildID)
 			return err
 		}
+
+		/*
+			err = vc.WaitUntilConnected()
+			if err != nil {
+				log.WithFields(log.Fields{
+					"error": err,
+					"play":  play,
+				}).Error("Failed to join voice channel")
+				vc.Close()
+				delete(queues, play.GuildID)
+				return err
+			}
+		*/
 	}
 
 	if vc.ChannelID != play.ChannelID {
-		vc.ChangeChannel(play.ChannelID)
+		vc.ChangeChannel(play.ChannelID, false, false)
 		time.Sleep(time.Millisecond * 200)
 	}
 
 	// Sleep for a specified amount of time before playing the sound
 	time.Sleep(time.Millisecond * 32)
+
+	// If we're appreciating this sound, lets play some DJ KHALLLLLEEEEDDDD
+	if play.Khaled {
+		log.Info("KHALED")
+		dj := getRandomSound(TYPE_KHALED)
+		dj.Play(vc)
+	}
 
 	// Play the sound
 	play.Sound.Play(vc)
@@ -321,7 +371,7 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 	// If the queue is empty, delete it
 	time.Sleep(time.Millisecond * time.Duration(play.Sound.PartDelay))
 	delete(queues, play.GuildID)
-	vc.Close()
+	vc.Disconnect()
 	return nil
 }
 
@@ -336,9 +386,12 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	parts := strings.Split(strings.ToLower(m.Content), " ")
-	var sound *Sound
+	var (
+		sound  *Sound
+		khaled bool
+	)
 
-	if parts[0] == "!airhorn" {
+	if parts[0] == "!airhorn" || parts[0] == "!anotha" || parts[0] == "!anoathaone" {
 		channel, _ := discord.Channel(m.ChannelID)
 		if channel == nil {
 			log.WithFields(log.Fields{
@@ -360,7 +413,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		// Support !airhorn <sound>
 		if len(parts) > 1 {
-			for _, s := range SOUNDS {
+			for _, s := range AIRHORNS {
 				if parts[1] == s.Name {
 					sound = s
 				}
@@ -371,7 +424,11 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 		}
 
-		go enqueuePlay(m.Author, guild, sound)
+		if strings.HasPrefix(parts[0], "!anotha") {
+			khaled = true
+		}
+
+		go enqueuePlay(m.Author, guild, sound, khaled)
 	}
 }
 
@@ -384,8 +441,14 @@ func main() {
 	flag.Parse()
 
 	log.Info("Preloading sounds...")
-	for _, sound := range SOUNDS {
-		SOUND_RANGE += sound.Weight
+	for _, sound := range AIRHORNS {
+		AIRHORN_SOUND_RANGE += sound.Weight
+		sound.Load()
+	}
+
+	log.Info("Preloading loyalty...")
+	for _, sound := range KHALED {
+		KHALED_SOUND_RANGE += sound.Weight
 		sound.Load()
 	}
 

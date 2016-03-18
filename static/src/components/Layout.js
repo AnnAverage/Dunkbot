@@ -1,5 +1,6 @@
 import React from 'react';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
+import OAuthStore from '../stores/OAuthStore';
 import Cloud from './Cloud';
 import IslandPond from './islands/IslandPond';
 import IslandTree from './islands/IslandTree';
@@ -14,11 +15,12 @@ import Footer from './Footer';
 import Parallax from '../libs/Parallax';
 import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
+import * as OAuthActions from '../actions/OAuthActions';
 import Constants from '../Constants';
 
 import '../style/style.styl';
 
-const Content = ({addBtnClick}) => (
+const Content = () => (
   <div className="content">
     <h1 className="title">!airhorn</h1>
     <p className="message">
@@ -28,7 +30,7 @@ const Content = ({addBtnClick}) => (
       <source src={Constants.Video.AIRHORN} type="video/mp4" />
     </video>
     <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" id="audio-airhorn" />
-    <a className="add-btn" onClick={addBtnClick}>Add to Discord</a>
+    <a className="add-btn" onClick={OAuthActions.start}>Add to Discord</a>
   </div>
 );
 
@@ -96,6 +98,7 @@ const Layout = React.createClass({
     }
 
     AirhornStatsStore.on('change', this.updateStats);
+    OAuthStore.on('change', this.playVideo);
   },
 
   componentDidMount() {
@@ -104,9 +107,11 @@ const Layout = React.createClass({
   },
 
   playVideo() {
-    document.getElementById('video-airhorn').play();
-    document.getElementById('audio-airhorn').play();
-    window.open('/login');
+    if (OAuthStore.shouldPlayVideo()) {
+      document.getElementById('video-airhorn').play();
+      document.getElementById('audio-airhorn').play();
+      OAuthActions.playedVideo();
+    }
   },
 
   updateStats() {
@@ -148,7 +153,7 @@ const Layout = React.createClass({
 
     return (
       <div className="container">
-        <Content addBtnClick={this.playVideo} />
+        <Content />
         <IslandPond />
         <IslandTree />
         <IslandTrees />
@@ -160,12 +165,12 @@ const Layout = React.createClass({
         <IslandShrooms />
         <IslandShrooms number="1" />
 
-
         {smallIslands}
 
         <div id="parallax">
           {clouds}
         </div>
+
         <StatsPanel
           show={this.state.showStats}
           count={this.state.count}

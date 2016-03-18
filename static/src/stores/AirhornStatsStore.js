@@ -4,11 +4,11 @@ import EventEmitter from 'events';
 import dispatcher from '../dispatcher';
 import Constants from '../Constants';
 
-let count = 99922456700;
-let uniqueUsers = 22022456700;
-let uniqueGuilds = 2456700;
-let uniqueChannels = 456700;
-let secretCount = 6700;
+let count = 0;
+let uniqueUsers = 0;
+let uniqueGuilds = 0;
+let uniqueChannels = 0;
+let secretCount = 0;
 let shouldShowStatsPanel = false;
 
 class AirhornStatsStore extends EventEmitter {

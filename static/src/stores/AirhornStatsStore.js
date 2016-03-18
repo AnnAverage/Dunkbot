@@ -15,10 +15,8 @@ class AirhornStatsStore extends EventEmitter {
   constructor() {
     super();
 
-    //let eventSource = new EventSource('/events');
-    //eventSource.onmessage = this.receivedMessage.bind(this);
-
-    this.fakeData();
+    let eventSource = new EventSource('/events');
+    eventSource.onmessage = this.receivedMessage.bind(this);
   }
 
   fakeData() {

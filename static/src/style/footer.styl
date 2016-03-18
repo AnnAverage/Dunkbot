@@ -23,10 +23,6 @@
       display: flex;
       cursor: pointer;
 
-      &:hover .count, &:hover .and-counting {
-        text-decoration: underline;
-      }
-
       .airhorn-count-content {
         align-items: center;
         display: flex;
@@ -58,6 +54,11 @@
       .stats-btn {
         align-self: center;
         margin-left: 32px;
+        z-index: 3;
+
+        &:hover.closed .tool-tip {
+          visibility: visible;
+        }
       }
     }
   }

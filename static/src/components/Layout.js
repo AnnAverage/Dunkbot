@@ -1,5 +1,3 @@
-/* @flow */
-
 import React from 'react';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
 import Cloud from './Cloud';
@@ -12,52 +10,13 @@ import IslandForest from './islands/IslandForest';
 import IslandLog from './islands/IslandLog';
 import IslandShrooms from './islands/IslandShrooms';
 import IslandSmall from './islands/IslandSmall';
+import Footer from './Footer';
 import Parallax from '../libs/Parallax';
 import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
 import Constants from '../Constants';
 
 import '../style/style.styl';
-
-const Footer = ({count, changeCount, showStatsPanel, statsHasBeenShown}) => {
-  let statsBtnClasses = 'crossfade';
-  if (statsHasBeenShown) {
-    if (showStatsPanel) {
-      statsBtnClasses += ' two';
-    }
-    else {
-      statsBtnClasses += ' two-reverse';
-    }
-  }
-
-  return (
-    <div className="footer">
-      <div className="airhorn-count">
-        <div className="stats-toggler" onClick={StatsActions.toggleStatsPanel}>
-          <div className="airhorn-count-content">
-            <img src={Constants.Image.AIRHORN_COUNTER} />
-            <div className="count-text">
-              <div className={`count ${changeCount ? 'count-big' : ''}`}>
-                {numeral(count).format('0,0')}
-              </div>
-              <div className="and-counting">and counting</div>
-            </div>
-          </div>
-          <div className='stats-btn'>
-        </div>
-          <img src={Constants.Image.ICON_ABOUT} className={statsBtnClasses} />
-        </div>
-      </div>
-      <div className="main-text">
-        <span className="normal-text">
-          Open sourced by the team at Discord. Contribute yourself on&nbsp;
-        </span>
-        <a href={Constants.GITHUB_URL}>GitHub</a>
-        <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
-      </div>
-    </div>
-  );
-};
 
 const Content = ({addBtnClick}) => (
   <div className="content">
@@ -147,11 +106,7 @@ const Layout = React.createClass({
   playVideo() {
     document.getElementById('video-airhorn').play();
     document.getElementById('audio-airhorn').play();
-    setTimeout(this.startOAuth, 1500);
-  },
-
-  startOAuth() {
-    window.location = '/login';
+    window.open('/login');
   },
 
   updateStats() {

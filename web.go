@@ -265,7 +265,7 @@ func handleMe(w http.ResponseWriter, r *http.Request) {
 
 func server() {
 	server := http.NewServeMux()
-	server.HandleFunc("/", handleIndex)
+	server.Handle("/", http.FileServer(http.Dir("static/dist")))
 	server.HandleFunc("/me", handleMe)
 	server.HandleFunc("/login", handleLogin)
 	server.HandleFunc("/callback", handleCallback)

@@ -8,6 +8,7 @@ const fs = require('fs');
 const del = require('del');
 const nib = require('nib');
 const ReactDOMServer = require('react-dom/server');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const htmlreplace = require('gulp-html-replace');
 const rename = require('gulp-rename');
 const React = require('react');
@@ -64,6 +65,14 @@ function getWebpackOptions(debug) {
     options.devtool = 'source-map';
     options.entry.app.unshift('webpack-dev-server/client?http://localhost:8000', PATH_WEBPACK);
   }
+  else {
+    options.output.filename = '[hash].js';
+    options.plugins.push(new ExtractTextPlugin('[contenthash].css'));
+    options.plugins.push(new webpack.optimize.UglifyJsPlugin());
+    options.module.loaders.push(
+      //{test: /\.(styl|css)$/, loader: ExtractTextPlugin.extract('style', 'css!stylus')}
+    );
+  }
 
   return options;
 }
@@ -98,7 +107,10 @@ gulp.task('build', ['clean'], (callback) => {
       console.log(err)
     }
     else {
-      fs.writeFile(PATH_STATS, JSON.stringify(stats.toJson()), callback);
+      if (!fs.existsSync(FOLDER_DIST)) {
+        fs.mkdirSync(FOLDER_DIST);
+      }
+      fs.writeFile(PATH_STATS, JSON.stringify(stats.toJson(), null, 2), callback);
     }
   });
 });
@@ -109,6 +121,7 @@ gulp.task('clean', () => {
 
 gulp.task('dist', ['build'], () => {
   const stats = JSON.parse(fs.readFileSync(PATH_STATS));
+  const index = stats.assetsByChunkName['app'];
   const findAsset = name => stats.modules.filter(mod => mod.identifier.indexOf(name) !== -1)[0].assets[0];
 
   require('react');
@@ -123,7 +136,10 @@ gulp.task('dist', ['build'], () => {
 
   function render(src, dst, content) {
     return gulp.src(src, { cwd: FOLDER_SRC })
-      .pipe(htmlreplace({mount: content}))
+      .pipe(htmlreplace({
+        mount: content,
+        js: index
+      }))
       .pipe(rename(dst))
       .pipe(gulp.dest(FOLDER_DIST));
   }

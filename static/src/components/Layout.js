@@ -13,7 +13,7 @@ import IslandSmall from './islands/IslandSmall';
 import Content from './Content';
 import Footer from './Footer';
 import StatsPanel from './StatsPanel';
-import Parallax from '../libs/Parallax';
+import Parallax from '../libs/parallax';
 import Constants from '../Constants';
 
 import '../style/style.styl';

@@ -6,6 +6,10 @@
 @require 'stats-crossfade';
 @require 'responsive';
 
+html, body, #app {
+  height: 100%;
+}
+
 body {
   font-family: roboto;
   display: flex;
@@ -88,4 +92,10 @@ body {
 .video-airhorn {
   padding: 10px;
   width: 681px;
+}
+
+@-moz-document url-prefix() {
+  .add-btn {
+    border-style: solid;
+  }
 }

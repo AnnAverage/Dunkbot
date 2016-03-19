@@ -46,8 +46,7 @@ function getWebpackOptions(debug) {
           loader: 'babel',
           query: babelOptions
         },
-        {test: /\.(png|svg|ogv|mp4|wav)$/, loader: 'file'},
-        {test: /\.(styl|css)$/, loader: 'style!css!stylus'}
+        {test: /\.(png|svg|ogv|mp4|wav)$/, loader: 'file'}
       ]
     },
     stylus: {
@@ -64,14 +63,13 @@ function getWebpackOptions(debug) {
     options.debug = true;
     options.devtool = 'source-map';
     options.entry.app.unshift('webpack-dev-server/client?http://localhost:8000', PATH_WEBPACK);
+    options.module.loaders.push({test: /\.(styl|css)$/, loader: 'style!css!stylus'});
   }
   else {
     options.output.filename = '[hash].js';
-    options.plugins.push(new ExtractTextPlugin('[contenthash].css'));
+    options.plugins.push(new ExtractTextPlugin('[hash].css'));
     options.plugins.push(new webpack.optimize.UglifyJsPlugin());
-    options.module.loaders.push(
-      //{test: /\.(styl|css)$/, loader: ExtractTextPlugin.extract('style', 'css!stylus')}
-    );
+    options.module.loaders.push({test: /\.styl$/, loader: ExtractTextPlugin.extract('style', 'css!stylus')});
   }
 
   return options;
@@ -138,7 +136,8 @@ gulp.task('dist', ['build'], () => {
     return gulp.src(src, { cwd: FOLDER_SRC })
       .pipe(htmlreplace({
         mount: content,
-        js: index
+        js: index[0],
+        css: index[1]
       }))
       .pipe(rename(dst))
       .pipe(gulp.dest(FOLDER_DIST));

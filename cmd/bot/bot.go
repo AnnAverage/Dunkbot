@@ -262,6 +262,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, isK
 	play := &Play{
 		GuildID:   guild.ID,
 		ChannelID: channel.ID,
+		UserID:    user.ID,
 		Sound:     sound,
 		Forced:    forced,
 		Khaled:    isKhaled,
@@ -295,7 +296,6 @@ func trackSoundStats(play *Play) {
 		}
 
 		base := fmt.Sprintf("airhorn:%s", baseChar)
-
 		pipe.Incr("airhorn:total")
 		pipe.Incr(fmt.Sprintf("%s:total", base))
 		pipe.Incr(fmt.Sprintf("%s:sound:%s", base, play.Sound.Name))

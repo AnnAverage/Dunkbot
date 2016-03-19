@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 	"time"
 
@@ -196,7 +198,7 @@ func (s *Sound) Play(vc *discordgo.VoiceConnection) {
 func getCurrentVoiceChannel(user *discordgo.User, guild *discordgo.Guild) *discordgo.Channel {
 	for _, vs := range guild.VoiceStates {
 		if vs.UserID == user.ID {
-			channel, _ := discord.Channel(vs.ChannelID)
+			channel, _ := discord.State.Channel(vs.ChannelID)
 			return channel
 		}
 	}
@@ -392,7 +394,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	)
 
 	if parts[0] == "!airhorn" || parts[0] == "!anotha" || parts[0] == "!anoathaone" {
-		channel, _ := discord.Channel(m.ChannelID)
+		channel, _ := discord.State.Channel(m.ChannelID)
 		if channel == nil {
 			log.WithFields(log.Fields{
 				"channel": m.ChannelID,
@@ -401,7 +403,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		guild, _ := discord.Guild(channel.GuildID)
+		guild, _ := discord.State.Guild(channel.GuildID)
 		if guild == nil {
 			log.WithFields(log.Fields{
 				"guild":   channel.GuildID,
@@ -484,8 +486,11 @@ func main() {
 		return
 	}
 
+	// We're running!
 	log.Info("AIRHORNBOT is ready to horn it up.")
-	for {
-		time.Sleep(time.Second * 1)
-	}
+
+	// Wait for a signal to quit
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, os.Kill)
+	<-c
 }

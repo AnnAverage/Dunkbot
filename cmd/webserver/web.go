@@ -269,7 +269,11 @@ func server() {
 	server.HandleFunc("/me", handleMe)
 	server.HandleFunc("/login", handleLogin)
 	server.HandleFunc("/callback", handleCallback)
-	server.Handle("/events", es)
+
+	// Only add this route if we have stats to push (e.g. redis connection)
+	if es != nil {
+		server.Handle("/events", es)
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -280,6 +284,12 @@ func server() {
 		"port": port,
 	}).Info("Starting HTTP Server")
 
+	// If the requests log doesnt exist, make it
+	if _, err := os.Stat("requests.log"); os.IsNotExist(err) {
+		ioutil.WriteFile("requests.log", []byte{}, 0600)
+	}
+
+	// Open the log file in append mode
 	logFile, err := os.OpenFile("requests.log", os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -289,6 +299,7 @@ func server() {
 	}
 	defer logFile.Close()
 
+	// Actually start the server
 	loggedRouter := handlers.LoggingHandler(logFile, server)
 	http.ListenAndServe(":"+port, loggedRouter)
 }
@@ -335,15 +346,17 @@ func main() {
 	)
 	flag.Parse()
 
-	// First, open a redis connection we use for stats
-	if connectToRedis(*Redis) != nil {
-		return
-	}
+	if *Redis != "" {
+		// First, open a redis connection we use for stats
+		if connectToRedis(*Redis) != nil {
+			return
+		}
 
-	// Now start the eventsource loop for client-side stat update
-	es = eventsource.New(nil, nil)
-	defer es.Close()
-	go broadcastLoop()
+		// Now start the eventsource loop for client-side stat update
+		es = eventsource.New(nil, nil)
+		defer es.Close()
+		go broadcastLoop()
+	}
 
 	// Load the HTML static page
 	data, err := ioutil.ReadFile("templates/index.html")

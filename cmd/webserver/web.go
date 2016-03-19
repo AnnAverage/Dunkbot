@@ -269,7 +269,11 @@ func server() {
 	server.HandleFunc("/me", handleMe)
 	server.HandleFunc("/login", handleLogin)
 	server.HandleFunc("/callback", handleCallback)
-	server.Handle("/events", es)
+
+	// Only add this route if we have stats to push (e.g. redis connection)
+	if es != nil {
+		server.Handle("/events", es)
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -342,15 +346,17 @@ func main() {
 	)
 	flag.Parse()
 
-	// First, open a redis connection we use for stats
-	if connectToRedis(*Redis) != nil {
-		return
-	}
+	if *Redis != "" {
+		// First, open a redis connection we use for stats
+		if connectToRedis(*Redis) != nil {
+			return
+		}
 
-	// Now start the eventsource loop for client-side stat update
-	es = eventsource.New(nil, nil)
-	defer es.Close()
-	go broadcastLoop()
+		// Now start the eventsource loop for client-side stat update
+		es = eventsource.New(nil, nil)
+		defer es.Close()
+		go broadcastLoop()
+	}
 
 	// Load the HTML static page
 	data, err := ioutil.ReadFile("templates/index.html")

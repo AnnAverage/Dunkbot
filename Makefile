@@ -1,5 +1,5 @@
-BOT_BINARY=airhornbot
-WEB_BINARY=airhornweb
+BOT_BINARY=bot
+WEB_BINARY=web
 
 bot:
 	go build -o ${BOT_BINARY} cmd/bot/bot.go
@@ -7,8 +7,9 @@ bot:
 web:
 	go build -o ${WEB_BINARY} cmd/webserver/web.go
 
+.PHONY: clean
 clean:
 	rm ${BOT_BINARY} ${WEB_BINARY}
 
-all:
-	bot web
+.PHONY: all
+all: bot web

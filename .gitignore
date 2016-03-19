@@ -3,8 +3,8 @@ bot/bot
 app/settings.py
 *.db
 .DS_Store
-airhornbot
-airhornweb
+bot
+web
 requests.log
 dist
 node_modules

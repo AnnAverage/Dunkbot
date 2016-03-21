@@ -14,6 +14,7 @@ import Content from './Content';
 import Footer from './Footer';
 import StatsPanel from './StatsPanel';
 import Parallax from '../libs/parallax';
+import ReactTooltip from 'react-tooltip';
 import Constants from '../Constants';
 
 import '../style/style.styl';
@@ -111,6 +112,7 @@ const Layout = React.createClass({
           changeCount={this.state.changeCount}
           showStatsPanel={this.state.showStats}
           statsHasBeenShown={this.state.statsHasBeenShown} />
+        <ReactTooltip effect="solid" type="light" class="tool-tip" offset={{top: -8}} />
       </div>
     );
   }

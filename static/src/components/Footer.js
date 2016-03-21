@@ -1,5 +1,4 @@
 import React from 'react';
-import ToolTip from './ToolTip';
 import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
 import Constants from '../Constants';
@@ -18,6 +17,11 @@ const Footer = React.createClass({
       }
     }
 
+    let toolTip = 'Click for more Stats';
+    if (showStatsPanel) {
+      toolTip = '';
+    }
+
     return (
       <div className="footer">
         <div className="airhorn-count">
@@ -31,9 +35,11 @@ const Footer = React.createClass({
                 <div className="and-counting">and counting</div>
               </div>
             </div>
-            <div className={`stats-btn ${showStatsPanel ? '' : 'closed'}`}>
-              <ToolTip element={this.refs.statsBtn}>Click for More Stats</ToolTip>
-              <img ref="statsBtn" src={Constants.Image.ICON_ABOUT} className={statsBtnClasses} />
+            <div className="stats-btn">
+              <img ref="statsBtn"
+                src={Constants.Image.ICON_ABOUT}
+                className={statsBtnClasses}
+                data-tip={toolTip} />
             </div>
           </div>
         </div>

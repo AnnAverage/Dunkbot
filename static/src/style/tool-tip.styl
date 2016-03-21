@@ -1,27 +1,27 @@
-arrow-size = 4px;
+// The !importants are for overriding the tooltip's styles
+@require 'variables';
+arrow-size = 6px;
 
 .tool-tip {
-  top: -2px
-  position: absolute;
-  background: white;
-  border-radius: 3px;
-  padding: 4px 8px;
-  font-size: 12px;
-  line-height: 14px;
-  visibility: hidden;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  line-height: 14px !important;
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  color: color-medium-gray;
+  color: color-medium-gray !important;
 
   &::after{
-    box-sizing: border-box;
+    box-sizing: border-box !important;
     content: "";
-    position: absolute;
-    left: "calc(50% - %s)" % 6px;
     top: 22px;
-    border: arrow-size solid black;
-    border-color: transparent transparent white white;
+    border: arrow-size solid white !important;
+    border-color: transparent transparent white white !important;
     transform-origin: 0 0;
-    transform: rotate(-45deg);
+    transform: rotate3d(0, 0, 1, -45deg);
     box-shadow: -1px 1px 0px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  &::before {
+    content: none !important;
   }
 }

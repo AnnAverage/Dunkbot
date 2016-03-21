@@ -15,6 +15,7 @@ export default {
     ICON_SECERT: require('./images/icon-secret.svg'),
     ICON_CLOSE: require('./images/icon-close.svg'),
     ICON_ABOUT: require('./images/icon-about.svg'),
+    ISLAND_AIRHORN: require('./images/island-airhorn.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
     ISLAND_SMALL_2: require('./images/island-small-02.png'),
     ISLAND_SMALL_3: require('./images/island-small-03.png'),

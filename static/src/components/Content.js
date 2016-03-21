@@ -10,23 +10,40 @@ const Content = React.createClass({
 
   playVideo() {
     if (OAuthStore.shouldPlayVideo()) {
-      this.refs.video.play();
-      this.refs.audio.play();
+      if (this.refs.video && this.refs.audio) {
+        this.refs.video.play();
+        this.refs.audio.play();
+      }
+
       OAuthActions.playedVideo();
     }
   },
 
+  isMobile() {
+    return window.matchMedia(`(max-width: ${Constants.MediaQuery.PHONE}px)`).matches;
+  },
+
   render() {
+    let center;
+    if (this.isMobile()) {
+      center = <img className="video-airhorn" src={Constants.Image.ISLAND_AIRHORN} />;
+    }
+    else {
+      center = (
+        <video preload className="video-airhorn" ref="video">
+          <source src={Constants.Video.AIRHORN} type="video/mp4" />
+          <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
+        </video>
+      );
+    }
+
     return (
       <div className="content">
         <h1 className="title">!airhorn</h1>
         <p className="message">
           The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want
         </p>
-        <video preload className="video-airhorn" ref="video">
-          <source src={Constants.Video.AIRHORN} type="video/mp4" />
-        </video>
-        <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
+        {center}
         <a className="add-btn" onClick={OAuthActions.start}>Add to Discord</a>
       </div>
     );

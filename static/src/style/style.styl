@@ -4,10 +4,10 @@
 @require 'footer';
 @require 'stats-panel';
 @require 'stats-crossfade';
-@require 'responsive';
 
 html, body, #app {
   height: 100%;
+  width: 100%;
 }
 
 body {
@@ -27,6 +27,8 @@ body {
 
   .container {
     position: relative;
+    overflow: hidden;
+    height: 100%;
   }
 }
 
@@ -99,3 +101,5 @@ body {
     border-style: solid;
   }
 }
+
+@require 'responsive';

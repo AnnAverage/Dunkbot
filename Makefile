@@ -1,10 +1,10 @@
 BOT_BINARY=bot
 WEB_BINARY=web
 
-bot:
+bot: cmd/bot/bot.go
 	go build -o ${BOT_BINARY} cmd/bot/bot.go
 
-web:
+web: cmd/webserver/web.go
 	go build -o ${WEB_BINARY} cmd/webserver/web.go
 
 .PHONY: clean

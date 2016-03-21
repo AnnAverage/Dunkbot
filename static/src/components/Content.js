@@ -11,6 +11,8 @@ const Content = React.createClass({
   playVideo() {
     if (OAuthStore.shouldPlayVideo()) {
       if (this.refs.video && this.refs.audio) {
+        this.refs.video.currentTime = 0;
+        this.refs.audio.currentTime = 0;
         this.refs.video.play();
         this.refs.audio.play();
       }
@@ -30,8 +32,7 @@ const Content = React.createClass({
     }
     else {
       center = (
-        <video preload className="video-airhorn" ref="video">
-          <source src={Constants.Video.AIRHORN} type="video/mp4" />
+        <video preload className="video-airhorn" ref="video" src={Constants.Video.AIRHORN} type="video/mp4">
           <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
         </video>
       );

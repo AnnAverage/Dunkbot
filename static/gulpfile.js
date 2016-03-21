@@ -120,6 +120,7 @@ gulp.task('clean', () => {
 gulp.task('dist', ['build'], () => {
   const stats = JSON.parse(fs.readFileSync(PATH_STATS));
   const index = stats.assetsByChunkName['app'];
+  const favicon = stats.modules.filter(mod => /favicon\.png/.test(mod.name))[0].assets;
   const findAsset = name => stats.modules.filter(mod => mod.identifier.indexOf(name) !== -1)[0].assets[0];
 
   require('react');
@@ -137,7 +138,11 @@ gulp.task('dist', ['build'], () => {
       .pipe(htmlreplace({
         mount: content,
         js: index[0],
-        css: index[1]
+        css: index[1],
+        favicon: {
+          src: favicon[0],
+          tpl: '<link rel="icon" href="%s" />'
+        }
       }))
       .pipe(rename(dst))
       .pipe(gulp.dest(FOLDER_DIST));

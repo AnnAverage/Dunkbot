@@ -18,3 +18,9 @@ export function playedVideo() {
     type: Constants.Event.OAUTH_PLAYED_VIDEO
   });
 }
+
+export function redirectedFromOAuth() {
+  dispatcher.dispatch({
+    type: Constants.Event.OAUTH_REDIRECTED_FROM
+  });
+}

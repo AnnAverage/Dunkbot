@@ -40,10 +40,12 @@ const Content = React.createClass({
 
     return (
       <div className="content">
-        <h1 className="title">!airhorn</h1>
-        <p className="message">
-          The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever need
-        </p>
+        <div className="shadow">
+          <h1 className="title">!airhorn</h1>
+          <p className="message">
+            The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever need
+          </p>
+        </div>
         {center}
         <a className="add-btn" onClick={OAuthActions.start}>Add to Discord</a>
       </div>

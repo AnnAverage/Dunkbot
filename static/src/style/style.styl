@@ -41,22 +41,28 @@ body {
   flex-flow: column;
   align-items: center;
 
-  .title {
-    color: color-dark-gray;
-    font-size: 64px;
-    line-height: 68px;
-    margin: 0;
-  }
+  .shadow {
+    background-color: rgba(255, 255, 255, .8);
+    box-shadow: 0 0 50px 25px rgba(255, 255, 255, .8);
+    text-align: center;
 
-  .message {
-    margin-top: 0px;
-    color: color-brown;
-    font-size: 15px;
-    line-height: 24px;
-    opacity: 0.6;
+    .title {
+      color: color-dark-gray;
+      font-size: 64px;
+      line-height: 68px;
+      margin: 0;
+    }
 
-    a {
+    .message {
+      margin-top: 0px;
       color: color-brown;
+      font-size: 15px;
+      line-height: 24px;
+      opacity: 0.6;
+
+      a {
+        color: color-brown;
+      }
     }
   }
 }

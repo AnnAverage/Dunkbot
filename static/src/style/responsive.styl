@@ -9,8 +9,14 @@
   }
 
   .stats-panel {
-    left: calc(50% - 112px);
+    left: calc(50% - 113px);
     bottom: 140px;
+  }
+
+  @-moz-document url-prefix() {
+    .stats-panel {
+      left: calc(50% - 118px);
+    }
   }
 
   .island {

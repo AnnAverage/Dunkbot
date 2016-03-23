@@ -10,7 +10,6 @@ import (
 	"os/exec"
 	"os/signal"
 	"strings"
-	"sync"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -28,9 +27,6 @@ var (
 
 	// Map of Guild id's to *Play channels, used for queuing and rate-limiting guilds
 	queues map[string]chan *Play = make(map[string]chan *Play)
-
-	// Mutex for queues
-	queues_m sync.Mutex
 
 	// Sound attributes
 	AIRHORN_SOUND_RANGE = 0
@@ -273,17 +269,14 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, isK
 	}
 
 	// Check if we already have a connection to this guild
-	queues_m.Lock()
 	_, exists := queues[guild.ID]
 
 	if exists {
 		if len(queues[guild.ID]) < MAX_QUEUE_SIZE {
 			queues[guild.ID] <- play
 		}
-		queues_m.Unlock()
 	} else {
 		queues[guild.ID] = make(chan *Play, MAX_QUEUE_SIZE)
-		queues_m.Unlock()
 		playSound(play, nil)
 	}
 }
@@ -335,24 +328,35 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 			log.WithFields(log.Fields{
 				"error": err,
 			}).Error("Failed to play sound")
-			queues_m.Lock()
 			delete(queues, play.GuildID)
-			queues_m.Unlock()
 			return err
 		}
+
+		/*
+			err = vc.WaitUntilConnected()
+			if err != nil {
+				log.WithFields(log.Fields{
+					"error": err,
+					"play":  play,
+				}).Error("Failed to join voice channel")
+				vc.Close()
+				delete(queues, play.GuildID)
+				return err
+			}
+		*/
 	}
 
-	// Move channels if we where previously somewhere else in the guild
 	if vc.ChannelID != play.ChannelID {
 		vc.ChangeChannel(play.ChannelID, false, false)
 		time.Sleep(time.Millisecond * 200)
 	}
 
 	// Sleep for a specified amount of time before playing the sound
-	time.Sleep(time.Millisecond * 64)
+	time.Sleep(time.Millisecond * 32)
 
 	// If we're appreciating this sound, lets play some DJ KHALLLLLEEEEDDDD
 	if play.Khaled {
+		log.Info("KHALED")
 		dj := getRandomSound(TYPE_KHALED)
 		dj.Play(vc)
 	}
@@ -364,18 +368,15 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 	play.Sound.Play(vc)
 
 	// If there is another song in the queue, recurse and play that
-	queues_m.Lock()
 	if len(queues[play.GuildID]) > 0 {
 		play := <-queues[play.GuildID]
 		playSound(play, vc)
-		queues_m.Unlock()
 		return nil
 	}
 
 	// If the queue is empty, delete it
-	delete(queues, play.GuildID)
-	queues_m.Unlock()
 	time.Sleep(time.Millisecond * time.Duration(play.Sound.PartDelay))
+	delete(queues, play.GuildID)
 	vc.Disconnect()
 	return nil
 }

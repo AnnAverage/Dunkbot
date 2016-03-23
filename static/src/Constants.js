@@ -5,6 +5,7 @@ export default {
   UNIQUE_SMALL_ISLAND_COUNT: 6,
   CLOUD_COUNT: 8,
   UNIQUE_CLOUD_COUNT: 4,
+  VIDEO_LENGTH: 1700,
 
   Image: {
     AIRHORN_COUNTER: require('./images/airhorn-counter.svg'),
@@ -16,6 +17,8 @@ export default {
     ICON_CLOSE: require('./images/icon-close.svg'),
     ICON_ABOUT: require('./images/icon-about.svg'),
     ISLAND_AIRHORN: require('./images/island-airhorn.svg'),
+    ISLAND_AIRHORN: require('./images/island-airhorn.svg'),
+    ISLAND_AIRHORN_MOBILE: require('./images/island-airhorn-mobile.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
     ISLAND_SMALL_2: require('./images/island-small-02.png'),
     ISLAND_SMALL_3: require('./images/island-small-03.png'),

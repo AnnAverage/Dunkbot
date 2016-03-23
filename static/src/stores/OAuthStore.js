@@ -51,6 +51,7 @@ class OAuthStore extends EventEmitter {
 
   playedVideo() {
     shouldPlayVideo = false;
+    this.emit('change');
   }
 
   shouldPlayVideo() {

@@ -13,7 +13,7 @@ First install the bot: `go install github.com/hac/airhornbot/cmd/bot`, then run 
 ```
 
 ### Running the Web Server
-First install the webserver: `go install github.com/hac/airhornbot/cmd/bot`, then run the following command:
+First install the webserver: `go install github.com/hac/airhornbot/cmd/bot`, then run `make static`, finally run:
 
 ```
 ./airhornweb -r "localhost:6379" -i MY_APPLICATION_ID -s 'MY_APPLICATION_SECRET"

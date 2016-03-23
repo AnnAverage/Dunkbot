@@ -42,7 +42,7 @@ const Content = React.createClass({
       <div className="content">
         <h1 className="title">!airhorn</h1>
         <p className="message">
-          The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever want
+          The only bot for <a href={Constants.DISCORD_URL}>Discord</a> you'll ever need
         </p>
         {center}
         <a className="add-btn" onClick={OAuthActions.start}>Add to Discord</a>

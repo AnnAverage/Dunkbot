@@ -367,8 +367,8 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 	queues_m.Lock()
 	if len(queues[play.GuildID]) > 0 {
 		play := <-queues[play.GuildID]
-		queues_m.Unlock()
 		playSound(play, vc)
+		queues_m.Unlock()
 		return nil
 	}
 

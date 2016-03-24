@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import Constants from '../../Constants';
 
@@ -10,7 +12,8 @@ let islands = [
   Constants.Image.ISLAND_SMALL_6
 ];
 
-export default ({type, number}) => {
-  let className = `island small-island small-${number}`;
+// @FlowIgnore
+export default ({type, number}): React.Element => {
+  let className: string = `island small-island small-${number}`;
   return <img className={className} src={islands[type]} />;
 };

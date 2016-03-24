@@ -1,3 +1,4 @@
+// @flow
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
 import EventEmitter from 'events';
@@ -11,6 +12,7 @@ let uniqueChannels = 0;
 let secretCount = 0;
 let shouldShowStatsPanel = false;
 
+// @FlowIgnore
 class AirhornStatsStore extends EventEmitter {
   constructor() {
     super();
@@ -46,8 +48,8 @@ class AirhornStatsStore extends EventEmitter {
     }, 1000);
   }
 
-  receivedMessage(event) {
-    let data = JSON.parse(event.data);
+  receivedMessage(event: MessageEvent) {
+    let data: MessageEventData = JSON.parse(event.data);
     count = data.total || 0;
     uniqueUsers = data.unique_users || 0;
     uniqueGuilds = data.unique_guilds || 0;
@@ -71,30 +73,31 @@ class AirhornStatsStore extends EventEmitter {
     this.emit('change');
   }
 
-  getCount() {
+  getCount(): number {
     return count;
   }
 
-  getUniqueUsers() {
+  getUniqueUsers(): number {
     return uniqueUsers;
   }
 
-  getUniqueGuilds() {
+  getUniqueGuilds(): number {
     return uniqueGuilds;
   }
 
-  getUniqueChannels() {
+  getUniqueChannels(): number {
     return uniqueChannels;
   }
 
-  getSecretCount() {
+  getSecretCount(): number {
     return secretCount;
   }
 
-  shouldShowStatsPanel() {
+  shouldShowStatsPanel(): boolean {
     return shouldShowStatsPanel;
   }
 
+  // @FlowIgnore
   handle({type}) {
     switch (type) {
       case Constants.Event.STATS_PANEL_SHOW: {

@@ -1,3 +1,5 @@
+// @Flow
+
 import EventEmitter from 'events';
 import request from 'superagent';
 import dispatcher from '../dispatcher';
@@ -7,6 +9,7 @@ import Constants from '../Constants';
 let shouldPlayVideo = false;
 let onMessage;
 
+// @FlowIgnore
 class OAuthStore extends EventEmitter {
   constructor() {
     super();

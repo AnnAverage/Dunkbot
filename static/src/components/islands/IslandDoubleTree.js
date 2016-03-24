@@ -1,8 +1,9 @@
+// @flow
 // jscs:disable maximumLineLength
 
 import React from 'react';
 
-export default () => (
+export default (): React.Element => (
   <svg className="island double-tree" xmlns="http://www.w3.org/2000/svg" width="259" height="221">
     <g fill="none" fill-rule="evenodd">
       <path fill="#FFE6A7" d="M1.5012 93.2279v57.903l118.413 68.367 136.734-78.942v-57.903L1.5012 93.2279z"/>

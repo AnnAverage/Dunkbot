@@ -1,22 +1,33 @@
+// @flow
+
 import EventEmitter from 'events';
 import dispatcher from '../dispatcher';
+import * as ResponsiveActions from '../actions/ResponsiveActions';
 import Constants from '../Constants';
 
+// @FlowIgnore
 class ResponsiveStore extends EventEmitter {
   constructor() {
     super();
-    window.addEventListener('resize', this.onResize.bind(this));
+    window.addEventListener('resize', ResponsiveActions.resize);
   }
 
   onResize() {
     this.emit('change');
   }
 
-  isMobile() {
+  isMobile(): boolean {
     return window.matchMedia(`(max-width: ${Constants.MediaQuery.PHONE}px)`).matches;
   }
 
-  handle() {
+  // @FlowIgnore
+  handle({type}) {
+    switch (type) {
+      case Constants.Event.RESPONSIVE_RESIZE: {
+        this.onResize();
+        break;
+      }
+    }
   }
 }
 

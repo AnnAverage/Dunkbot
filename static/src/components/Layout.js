@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
 import Cloud from './Cloud';
@@ -19,8 +21,21 @@ import Constants from '../Constants';
 
 import '../style/style.styl';
 
+type State = {
+  count: number,
+  uniqueUsers: number,
+  uniqueGuilds: number,
+  uniqueChannels: number,
+  secretCount: number,
+  showStats: boolean,
+  statsHasBeenShown: boolean,
+  changeCount: boolean
+};
+
+let changeCountTimeout: number;
+
 const Layout = React.createClass({
-  getInitialState() {
+  getInitialState(): State {
     return {
       count: 0,
       uniqueUsers: 0,
@@ -54,8 +69,8 @@ const Layout = React.createClass({
       changeCount: this.state.count != AirhornStatsStore.getCount()
     });
 
-    clearTimeout(this.changeCountTimeout);
-    this.changeCountTimeout = setTimeout(
+    clearTimeout(changeCountTimeout);
+    changeCountTimeout = setTimeout(
       this.finishChangeCountAnimation,
       Constants.Animation.COUNT_CHANGE_TIME);
   },

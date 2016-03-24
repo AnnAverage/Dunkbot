@@ -1,7 +1,9 @@
+// @flow
+
 import Constants from '../Constants';
 
 const ResizeableSVG = {
-  checkMediaQuery() {
+  checkMediaQuery(): boolean {
     return window.matchMedia(`(max-width: ${Constants.MediaQuery.PHONE}px)`).matches;
   },
 
@@ -13,7 +15,7 @@ const ResizeableSVG = {
     this.forceUpdate();
   },
 
-  getViewBox(width, height) {
+  getViewBox(width: number, height: number): string {
     if (this.checkMediaQuery()) {
       return `0 0 ${width * 2} ${height * 2}`;
     }

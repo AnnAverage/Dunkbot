@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
@@ -6,7 +8,8 @@ import Constants from '../Constants';
 const Footer = React.createClass({
   render() {
     let {count, changeCount, showStatsPanel, statsHasBeenShown} = this.props;
-    let statsBtnClasses = 'crossfade';
+
+    let statsBtnClasses: string = 'crossfade';
 
     if (statsHasBeenShown) {
       if (showStatsPanel) {
@@ -17,7 +20,7 @@ const Footer = React.createClass({
       }
     }
 
-    let toolTip = 'Click for more Stats';
+    let toolTip: string = 'Click for more Stats';
     if (showStatsPanel) {
       toolTip = '';
     }

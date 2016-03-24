@@ -4,12 +4,7 @@
   "excludeFiles": [
     "**/gulpfile.js",
     "node_modules/**",
-    "discord_app/declarations",
-    "discord_desktop/atom/node_modules/**",
-    "discord_desktop/atom-shell/**",
-    "discord_mobile/node_modules/**",
-    "discord_mobile/build/index.ios.js",
-    "discord_mobile/vendor/**"
+    "static/src/declarations/**"
   ],
   "requireCurlyBraces": [
     "else",

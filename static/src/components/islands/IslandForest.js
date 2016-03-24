@@ -1,9 +1,11 @@
+// @flow
 // jscs:disable maximumLineLength
 
 import React from 'react';
 
-export default ({number}) => {
-  let className = 'island forest';
+// @FlowIgnore
+export default ({number}: number): React.Element => {
+  let className: string = 'island forest';
   if (number) {
     className += `-${number}`;
   }

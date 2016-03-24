@@ -16,8 +16,7 @@ export default {
     ICON_SECERT: require('./images/icon-secret.svg'),
     ICON_CLOSE: require('./images/icon-close.svg'),
     ICON_ABOUT: require('./images/icon-about.svg'),
-    ISLAND_AIRHORN: require('./images/island-airhorn.svg'),
-    ISLAND_AIRHORN: require('./images/island-airhorn.svg'),
+    ISLAND_AIRHORN: require('./images/island-airhorn.png'),
     ISLAND_AIRHORN_MOBILE: require('./images/island-airhorn-mobile.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
     ISLAND_SMALL_2: require('./images/island-small-02.png'),
@@ -47,7 +46,9 @@ export default {
     OAUTH_START: 'EVENT_OAUTH_START',
     OAUTH_END: 'EVENT_OAUTH_END',
     OAUTH_PLAYED_VIDEO: 'EVENT_OAUTH_PLAYED_VIDEO',
-    OAUTH_REDIRECTED_FROM: 'EVENT_OAUTH_REDIRECTED_FROM'
+    OAUTH_REDIRECTED_FROM: 'EVENT_OAUTH_REDIRECTED_FROM',
+
+    RESPONSIVE_RESIZE: 'EVENT_RESPONSIVE_RESIZE'
   },
 
   Message: {

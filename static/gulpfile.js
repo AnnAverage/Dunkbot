@@ -46,7 +46,7 @@ function getWebpackOptions(debug) {
           loader: 'babel',
           query: babelOptions
         },
-        {test: /\.(png|svg|ogv|mp4|wav)$/, loader: 'file'}
+        {test: /\.(png|svg|ogv|mp4|webm|wav)$/, loader: 'file'}
       ]
     },
     stylus: {

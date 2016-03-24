@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
@@ -15,12 +17,13 @@ const StatsRow = ({icon, label, value}) => {
   );
 };
 
+// @FlowIgnore
 const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show, hasBeenShown}) => {
   if (!hasBeenShown) {
     return <noscript />;
   }
 
-  let classes = 'stats-panel';
+  let classes: string = 'stats-panel';
   if (show) {
     classes += 'crossfade one';
   }

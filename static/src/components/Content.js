@@ -1,11 +1,18 @@
+// @flow
+
 import React from 'react';
 import OAuthStore from '../stores/OAuthStore';
 import ResponsiveStore from '../stores/ResponsiveStore';
 import * as OAuthActions from '../actions/OAuthActions';
 import Constants from '../Constants';
 
+type State = {
+  isMobile: boolean,
+  showVideo: boolean
+};
+
 const Content = React.createClass({
-  getInitialState() {
+  getInitialState(): State {
     return {
       isMobile: ResponsiveStore.isMobile(),
       showVideo: false
@@ -38,11 +45,19 @@ const Content = React.createClass({
     setTimeout(OAuthActions.playedVideo, Constants.VIDEO_LENGTH);
   },
 
-  getCenter() {
+  getCenter(): React.Element {
     if (this.state.isMobile) {
       return <img className="video-airhorn" src={Constants.Image.ISLAND_AIRHORN_MOBILE} />;
     }
     else {
+      // return (
+      //   <div className="video-airhorn">
+      //     <video preload autoPlay className="video-airhorn" ref="video" src={Constants.Video.AIRHORN} type="video/mp4">
+      //       <audio preload autoPlay src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
+      //     </video>
+      //     <img className="video-airhorn" src={Constants.Image.ISLAND_AIRHORN} onClick={this.forcePlayVideo} />
+      //   </div>
+      // );
       if (this.state.showVideo) {
         return (
           <video preload autoPlay className="video-airhorn" ref="video" src={Constants.Video.AIRHORN} type="video/mp4">
@@ -56,7 +71,7 @@ const Content = React.createClass({
     }
   },
 
-  render() {
+  render(): React.Element {
     return (
       <div className="content">
         <div className="shadow">

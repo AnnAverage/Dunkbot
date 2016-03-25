@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   background-color: white;
   opacity: 0.98;
   padding: 18px 20px;
@@ -17,7 +17,6 @@
 
   .airhorn-count {
     display: flex;
-    flex: 0.5;
 
     .stats-toggler {
       display: flex;
@@ -70,6 +69,21 @@
 
     .arrow {
       text-decoration: none;
+    }
+  }
+
+  .social {
+    display: flex;
+    justify-content: flex-end;
+    align-self: center;
+    width: 228px;
+
+    img {
+      padding-left: 10px;
+
+      &:hover {
+        opacity: .9;
+      }
     }
   }
 }

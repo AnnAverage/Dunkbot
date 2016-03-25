@@ -1,6 +1,7 @@
 export default {
   GITHUB_URL: 'https://github.com/hammerandchisel/airhornbot',
   DISCORD_URL: 'https://discordapp.com',
+  AIRHORN_URL: 'https://airhorn.solutions',
   SMALL_ISLAND_COUNT: 12,
   UNIQUE_SMALL_ISLAND_COUNT: 6,
   CLOUD_COUNT: 8,
@@ -16,6 +17,8 @@ export default {
     ICON_SECERT: require('./images/icon-secret.svg'),
     ICON_CLOSE: require('./images/icon-close.svg'),
     ICON_ABOUT: require('./images/icon-about.svg'),
+    ICON_FACEBOOK: require('./images/icon-facebook.svg'),
+    ICON_TWITTER: require('./images/icon-twitter.svg'),
     ISLAND_AIRHORN: require('./images/island-airhorn.png'),
     ISLAND_AIRHORN_MOBILE: require('./images/island-airhorn-mobile.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
@@ -57,5 +60,10 @@ export default {
 
   MediaQuery: {
     PHONE: 690
+  },
+
+  Social: {
+    MESSAGE_TWITTER: 'This Discord bot makes airhorn sounds ayy lmao peep dis:',
+    MESSAGE_FACEBOOK: ''
   }
 };

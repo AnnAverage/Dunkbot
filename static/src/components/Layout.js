@@ -94,6 +94,12 @@ const Layout = React.createClass({
       clouds.push(<Cloud number={i} type={type} key={i} />);
     }
 
+    let toolTip;
+
+    if (!this.state.showStats) {
+      toolTip = <ReactTooltip effect="solid" type="light" class="tool-tip" offset={{top: -8}} />;
+    }
+
     return (
       <div className="container">
         <Content />
@@ -127,7 +133,7 @@ const Layout = React.createClass({
           changeCount={this.state.changeCount}
           showStatsPanel={this.state.showStats}
           statsHasBeenShown={this.state.statsHasBeenShown} />
-        <ReactTooltip effect="solid" type="light" class="tool-tip" offset={{top: -8}} />
+        {toolTip}
       </div>
     );
   }

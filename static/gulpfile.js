@@ -120,7 +120,8 @@ gulp.task('clean', () => {
 gulp.task('dist', ['build'], () => {
   const stats = JSON.parse(fs.readFileSync(PATH_STATS));
   const index = stats.assetsByChunkName['app'];
-  const shareImage = stats.modules.filter(mod => /share\.png/.test(mod.name))[0].assets;
+  const fbImage = stats.modules.filter(mod => /og-facebook\.png/.test(mod.name))[0].assets;
+  const twitterImage = stats.modules.filter(mod => /og-twitter\.png/.test(mod.name))[0].assets;
   const favicon = stats.modules.filter(mod => /favicon\.png/.test(mod.name))[0].assets;
   const findAsset = name => stats.modules.filter(mod => mod.identifier.indexOf(name) !== -1)[0].assets[0];
 
@@ -141,11 +142,11 @@ gulp.task('dist', ['build'], () => {
         js: index[0],
         css: index[1],
         ogimage: {
-          src: shareImage[0],
+          src: fbImage[0],
           tpl: '<meta property="og:image" content="https://airhorn.solutions/%s" />'
         },
         twitterimage: {
-          src: shareImage[0],
+          src: twitterImage[0],
           tpl: '<meta name="twitter:image" content="https://airhorn.solutions/%s" />'
         },
         favicon: {

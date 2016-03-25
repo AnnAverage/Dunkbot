@@ -20,18 +20,22 @@ const Content = React.createClass({
   },
 
   componentWillMount() {
-    OAuthStore.on('change', this.playVideo);
+    OAuthStore.on('change', this.checkToPlayVideo);
     ResponsiveStore.on('change', this.setSize);
   },
 
-  playVideo() {
-    this.setState({
-      showVideo: OAuthStore.shouldPlayVideo()
-    });
-
+  checkToPlayVideo() {
     if (OAuthStore.shouldPlayVideo()) {
-      setTimeout(OAuthActions.playedVideo, Constants.VIDEO_LENGTH);
+      this.playVideo();
     }
+  },
+
+  playVideo() {
+    this.refs.video.currentTime = 0;
+    this.refs.audio.currentTime = 0;
+    this.refs.video.play();
+    this.refs.audio.play();
+    setTimeout(OAuthActions.playedVideo, Constants.VIDEO_LENGTH);
   },
 
   setSize() {
@@ -40,34 +44,22 @@ const Content = React.createClass({
     });
   },
 
-  forcePlayVideo() {
-    this.setState({showVideo: true});
-    setTimeout(OAuthActions.playedVideo, Constants.VIDEO_LENGTH);
-  },
-
   getCenter(): React.Element {
     if (this.state.isMobile) {
       return <img className="video-airhorn" src={Constants.Image.ISLAND_AIRHORN_MOBILE} />;
     }
     else {
-      // return (
-      //   <div className="video-airhorn">
-      //     <video preload autoPlay className="video-airhorn" ref="video" src={Constants.Video.AIRHORN} type="video/mp4">
-      //       <audio preload autoPlay src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
-      //     </video>
-      //     <img className="video-airhorn" src={Constants.Image.ISLAND_AIRHORN} onClick={this.forcePlayVideo} />
-      //   </div>
-      // );
-      if (this.state.showVideo) {
-        return (
-          <video preload autoPlay className="video-airhorn" ref="video" src={Constants.Video.AIRHORN} type="video/mp4">
-            <audio preload autoPlay src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
-          </video>
-        );
-      }
-      else {
-        return <img className="video-airhorn" src={Constants.Image.ISLAND_AIRHORN} onClick={this.forcePlayVideo} />;
-      }
+      return (
+        <video
+          preload
+          className="video-airhorn"
+          ref="video"
+          src={Constants.Video.AIRHORN}
+          type="video/mp4"
+          onClick={this.playVideo}>
+          <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
+        </video>
+      );
     }
   },
 

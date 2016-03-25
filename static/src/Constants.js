@@ -19,7 +19,6 @@ export default {
     ICON_ABOUT: require('./images/icon-about.svg'),
     ICON_FACEBOOK: require('./images/icon-facebook.svg'),
     ICON_TWITTER: require('./images/icon-twitter.svg'),
-    ISLAND_AIRHORN: require('./images/island-airhorn.png'),
     ISLAND_AIRHORN_MOBILE: require('./images/island-airhorn-mobile.svg'),
     ISLAND_SMALL_1: require('./images/island-small-01.png'),
     ISLAND_SMALL_2: require('./images/island-small-02.png'),

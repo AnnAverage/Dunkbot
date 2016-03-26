@@ -170,7 +170,8 @@ function createGlobals() {
       return {matches: false};
     },
 
-    addEventListener() {}
+    addEventListener() {},
+    location: {search: ''}
   };
 
   global.document = {

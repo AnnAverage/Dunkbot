@@ -15,7 +15,7 @@ class ShareStore extends EventEmitter {
   }
 
   open(url: string) {
-    window.open(url, '', 'height=500px width=500px');
+    window.open(url, '', 'height=500, width=500');
   }
 
   handle({type}) {

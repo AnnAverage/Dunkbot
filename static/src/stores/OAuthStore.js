@@ -1,9 +1,10 @@
 // @Flow
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
 import EventEmitter from 'events';
-import request from 'superagent';
 import dispatcher from '../dispatcher';
 import * as OAuthActions from '../actions/OAuthActions';
+import queryString from 'query-string';
 import Constants from '../Constants';
 
 let shouldPlayVideo = false;
@@ -14,14 +15,13 @@ class OAuthStore extends EventEmitter {
   constructor() {
     super();
 
-    request.get('/me').end((err, res) => {
-      if (err) {
-        return;
-      }
-      if (res.body.username) {
-        OAuthActions.redirectedFromOAuth();
-      }
-    });
+    let keyToSuccess = queryString.parse(window.location.search).key_to_success;
+    if (keyToSuccess == '1') {
+      this.redirectedFromOAuth(true);
+    }
+    else if (keyToSuccess == '0') {
+      this.redirectedFromOAuth(false);
+    }
   }
 
   startOAuth() {
@@ -45,11 +45,12 @@ class OAuthStore extends EventEmitter {
     this.emit('change');
   }
 
-  redirectedFromOAuth() {
-    if (window.opener) {
+  redirectedFromOAuth(addedBot: boolean) {
+    if (addedBot && window.opener) {
       window.opener.postMessage(Constants.Message.OAUTH_ADDED, '*');
-      window.close();
     }
+
+    window.close();
   }
 
   playedVideo() {
@@ -61,7 +62,7 @@ class OAuthStore extends EventEmitter {
     return shouldPlayVideo;
   }
 
-  handle({type}) {
+  handle({type, addedBot}) {
     switch (type) {
       case Constants.Event.OAUTH_START: {
         this.startOAuth();
@@ -76,7 +77,7 @@ class OAuthStore extends EventEmitter {
         break;
       }
       case Constants.Event.OAUTH_REDIRECTED_FROM: {
-        this.redirectedFromOAuth();
+        this.redirectedFromOAuth(addedBot);
         break;
       }
     }

@@ -129,7 +129,8 @@ gulp.task('dist', ['build'], () => {
   require('babel-register')(babelOptions);
   require.extensions['.styl'] = () => {};
   require.extensions['.svg'] = require.extensions['.png'] =
-    require.extensions['.mp4'] = require.extensions['.wav'] = (module, filename) => {
+    require.extensions['.mp4'] = require.extensions['.wav'] =
+    require.extensions['.ogv'] = require.extensions['.webm'] = (module, filename) => {
       module.exports = findAsset(filename);
     };
 

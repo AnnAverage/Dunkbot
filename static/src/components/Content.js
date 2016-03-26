@@ -54,9 +54,10 @@ const Content = React.createClass({
           preload
           className="video-airhorn"
           ref="video"
-          src={Constants.Video.AIRHORN}
-          type="video/mp4"
           onClick={this.playVideo}>
+          <source src={Constants.Video.AIRHORN} type="video/mp4" />
+          <source src={Constants.Video.AIRHORN_OGV} type="video/ogg; codecs=theora, vorbis" />
+          <source src={Constants.Video.AIRHORN_WEBM} type="video/webm; codecs=vp8, vorbis" />
           <audio preload src={Constants.Audio.AIRHORN} type="audio/wav" ref="audio" />
         </video>
       );

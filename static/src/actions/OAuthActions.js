@@ -21,8 +21,9 @@ export function playedVideo() {
   });
 }
 
-export function redirectedFromOAuth() {
+export function redirectedFromOAuth(addedBot: boolean) {
   dispatcher.dispatch({
-    type: Constants.Event.OAUTH_REDIRECTED_FROM
+    type: Constants.Event.OAUTH_REDIRECTED_FROM,
+    addedBot: addedBot
   });
 }

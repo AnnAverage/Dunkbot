@@ -29,11 +29,12 @@ export default {
   },
 
   Video: {
-    AIRHORN: require('./videos/airhorn.mp4')
+    AIRHORN: require('./videos/airhorn.mp4'),
+    AIRHORN_WEBM: require('./videos/airhorn.webm')
   },
 
   Audio: {
-    AIRHORN: require('../../audio/airhorn_default.wav')
+    AIRHORN: require('../../audio/airhorn_default.wav'),
   },
 
   Animation: {

@@ -17,6 +17,7 @@ import Footer from './Footer';
 import StatsPanel from './StatsPanel';
 import Parallax from '../libs/parallax';
 import ReactTooltip from 'react-tooltip';
+import Browser from 'detect-browser';
 import Constants from '../Constants';
 
 import '../style/style.styl';
@@ -101,7 +102,7 @@ const Layout = React.createClass({
     }
 
     return (
-      <div className="container">
+      <div className={`container ${Browser.name}`}>
         <Content />
         <IslandPond />
         <IslandTree />

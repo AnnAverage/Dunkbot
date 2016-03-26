@@ -11,7 +11,6 @@ class ShareStore extends EventEmitter {
   }
 
   shareWithTwitter() {
-    console.log('sharing with twitter');
     this.open(`https://twitter.com/share?text=${Constants.Social.MESSAGE_TWITTER}`);
   }
 
@@ -20,7 +19,6 @@ class ShareStore extends EventEmitter {
   }
 
   handle({type}) {
-    console.log(type);
     switch (type) {
       case Constants.Event.SHARE_WITH_FACEBOOK: {
         this.shareWithFacebook();

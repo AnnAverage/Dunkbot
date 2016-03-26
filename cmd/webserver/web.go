@@ -159,7 +159,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 			"expected": session.Values["state"],
 			"received": state,
 		}).Error("Invalid OAuth state")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/?key_to_success=0", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -168,7 +168,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{
 			"error": errorMsg,
 		}).Error("Received OAuth error from provider")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/?key_to_success=0", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -178,7 +178,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 			"error": err,
 			"token": token,
 		}).Error("Failed to exchange token with provider")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/?key_to_success=0", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -236,7 +236,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 	session.Save(r, w)
 
 	// And redirect the user back to the dashboard
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/?key_to_success=1", http.StatusTemporaryRedirect)
 }
 
 func handleMe(w http.ResponseWriter, r *http.Request) {

@@ -3,9 +3,12 @@
 
 import React from 'react';
 
-// @FlowIgnore
-export default ({number}): React.Element => {
-  let className: string = 'island shrooms';
+type Props = {
+  number: number
+};
+
+export default ({number}: Props): React.Element => {
+  let className = 'island shrooms';
   if (number) {
     className += `-${number}`;
   }

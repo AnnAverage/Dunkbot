@@ -1,7 +1,7 @@
-// @Flow
+// @flow
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
-import EventEmitter from 'events';
+import {EventEmitter} from 'events';
 import dispatcher from '../dispatcher';
 import * as OAuthActions from '../actions/OAuthActions';
 import queryString from 'query-string';
@@ -10,7 +10,6 @@ import Constants from '../Constants';
 let shouldPlayVideo = false;
 let onMessage;
 
-// @FlowIgnore
 class OAuthStore extends EventEmitter {
   constructor() {
     super();
@@ -33,7 +32,7 @@ class OAuthStore extends EventEmitter {
     this.emit('change');
   }
 
-  onMessage({data}) {
+  onMessage({data}: {data: string}) {
     if (data == Constants.Message.OAUTH_ADDED) {
       this.endOAuth();
     }
@@ -58,11 +57,11 @@ class OAuthStore extends EventEmitter {
     this.emit('change');
   }
 
-  shouldPlayVideo() {
+  shouldPlayVideo(): boolean {
     return shouldPlayVideo;
   }
 
-  handle({type, addedBot}) {
+  handle({type, addedBot}: {type: string, addedBot: boolean}) {
     switch (type) {
       case Constants.Event.OAUTH_START: {
         this.startOAuth();

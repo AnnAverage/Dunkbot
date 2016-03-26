@@ -1,11 +1,10 @@
 // @flow
 
-import EventEmitter from 'events';
+import {EventEmitter} from 'events';
 import dispatcher from '../dispatcher';
 import * as ResponsiveActions from '../actions/ResponsiveActions';
 import Constants from '../Constants';
 
-// @FlowIgnore
 class ResponsiveStore extends EventEmitter {
   constructor() {
     super();
@@ -20,8 +19,7 @@ class ResponsiveStore extends EventEmitter {
     return window.matchMedia(`(max-width: ${Constants.MediaQuery.PHONE}px)`).matches;
   }
 
-  // @FlowIgnore
-  handle({type}) {
+  handle({type}: {type: string}) {
     switch (type) {
       case Constants.Event.RESPONSIVE_RESIZE: {
         this.onResize();

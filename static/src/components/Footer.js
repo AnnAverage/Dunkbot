@@ -9,9 +9,9 @@ import Constants from '../Constants';
 
 const Footer = React.createClass({
   render() {
-    let {count, changeCount, showStatsPanel, statsHasBeenShown} = this.props;
+    const {count, changeCount, showStatsPanel, statsHasBeenShown} = this.props;
 
-    let statsBtnClasses: string = 'crossfade';
+    let statsBtnClasses = 'crossfade';
 
     if (statsHasBeenShown) {
       if (showStatsPanel) {
@@ -22,7 +22,7 @@ const Footer = React.createClass({
       }
     }
 
-    let toolTip: string = 'Click for more Stats';
+    let toolTip = 'Click for more Stats';
     if (showStatsPanel) {
       toolTip = '';
     }

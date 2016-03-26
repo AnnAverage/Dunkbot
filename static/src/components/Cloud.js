@@ -3,10 +3,14 @@
 
 import React from 'react';
 
-// @FlowIgnore
-export default ({type, number}): React.Element => {
-  let depth: string = '0.2';
-  let className: string = `cloud cloud-${number} layer`;
+type Props = {
+  type: string,
+  number: string
+};
+
+export default ({type, number}: Props): React.Element => {
+  const depth = '0.2';
+  const className = `cloud cloud-${number} layer`;
 
   switch (type) {
     case 0: {

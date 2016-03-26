@@ -19,8 +19,9 @@ import Parallax from '../libs/parallax';
 import ReactTooltip from 'react-tooltip';
 import Browser from 'detect-browser';
 import Constants from '../Constants';
-
 import '../style/style.styl';
+
+const PARALLAX_REF = 'PARALLAX_REF';
 
 type State = {
   count: number,
@@ -54,8 +55,7 @@ const Layout = React.createClass({
   },
 
   componentDidMount() {
-    const scene = document.getElementById('parallax');
-    new Parallax(scene);
+    new Parallax(this.refs[PARALLAX_REF]);
   },
 
   updateStats() {
@@ -96,7 +96,6 @@ const Layout = React.createClass({
     }
 
     let toolTip;
-
     if (!this.state.showStats) {
       toolTip = <ReactTooltip effect="solid" type="light" class="tool-tip" offset={{top: -8}} />;
     }
@@ -117,7 +116,7 @@ const Layout = React.createClass({
 
         {smallIslands}
 
-        <div id="parallax">
+        <div id="parallax" ref={PARALLAX_REF}>
           {clouds}
         </div>
 

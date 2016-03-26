@@ -17,18 +17,27 @@ const StatsRow = ({icon, label, value}) => {
   );
 };
 
-// @FlowIgnore
-const StatsPanel = ({count, uniqueUsers, uniqueGuilds, uniqueChannels, secretCount, show, hasBeenShown}) => {
+type StatsPanelProps = {
+  count: number,
+  uniqueUsers: number,
+  uniqueGuilds: number,
+  uniqueChannels: number,
+  secretCount: number,
+  show: boolean,
+  hasBeenShown: boolean
+};
+
+const StatsPanel = ({
+  count,
+  uniqueUsers,
+  uniqueGuilds,
+  uniqueChannels,
+  secretCount,
+  show,
+  hasBeenShown
+}: StatsPanelProps) => {
   if (!hasBeenShown) {
     return <noscript />;
-  }
-
-  let classes: string = 'stats-panel';
-  if (show) {
-    classes += 'crossfade one';
-  }
-  else {
-    classes += 'crossfade two';
   }
 
   return (

@@ -1,7 +1,7 @@
 // @flow
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
-import EventEmitter from 'events';
+import {EventEmitter} from 'events';
 import dispatcher from '../dispatcher';
 import Constants from '../Constants';
 
@@ -12,7 +12,6 @@ let uniqueChannels = 0;
 let secretCount = 0;
 let shouldShowStatsPanel = false;
 
-// @FlowIgnore
 class AirhornStatsStore extends EventEmitter {
   constructor() {
     super();
@@ -97,8 +96,7 @@ class AirhornStatsStore extends EventEmitter {
     return shouldShowStatsPanel;
   }
 
-  // @FlowIgnore
-  handle({type}) {
+  handle({type}: {type: string}) {
     switch (type) {
       case Constants.Event.STATS_PANEL_SHOW: {
         this.showStatsPanel();

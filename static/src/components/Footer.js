@@ -49,11 +49,7 @@ const Footer = React.createClass({
           </div>
         </div>
         <div className="main-text">
-          <span className="normal-text">
-            Open sourced by the team at Discord. Contribute yourself on&nbsp;
-          </span>
-          <a href={Constants.GITHUB_URL}>GitHub</a>
-          <a href={Constants.GITHUB_URL} className="arrow">&nbsp;➔</a>
+          <span className="normal-text">Airhorn Solutions saved my business AND my marriage</span>
         </div>
         <div className="social">
           <img src={Constants.Image.ICON_TWITTER} onClick={ShareActions.withTwitter} />

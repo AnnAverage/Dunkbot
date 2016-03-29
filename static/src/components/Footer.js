@@ -49,7 +49,9 @@ const Footer = React.createClass({
           </div>
         </div>
         <div className="main-text">
-          <span className="normal-text">Airhorn Solutions saved my business AND my marriage</span>
+          <span className="normal-text">Airhorn Solutions saved my business</span>
+          <span className="dark">&nbsp;and&nbsp;</span>
+          <span className="normal-text">my marriage</span>
         </div>
         <div className="social">
           <img src={Constants.Image.ICON_TWITTER} onClick={ShareActions.withTwitter} />

@@ -4,13 +4,18 @@
 import React from 'react';
 
 type Props = {
-  number: number
+  number: number,
+  paused: boolean
 };
 
-export default ({number}: Props): React.Element => {
+export default ({number, paused}: Props): React.Element => {
   let className = 'island forest';
   if (number) {
     className += `-${number}`;
+  }
+
+  if (paused) {
+    className += ' paused';
   }
 
   return (

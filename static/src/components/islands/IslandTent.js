@@ -9,9 +9,10 @@ export default React.createClass({
 
   render(): React.Element {
     let viewBox: string = this.getViewBox(259, 228);
+    let {paused} = this.props;
 
     return (
-        <svg className="island tent" xmlns="http://www.w3.org/2000/svg" width="259" height="228" viewBox={viewBox}>
+        <svg className={`island tent ${paused ? 'paused' : ''}`} xmlns="http://www.w3.org/2000/svg" width="259" height="228" viewBox={viewBox}>
         <g fill="none" fill-rule="evenodd">
           <path stroke="#5E4634" strokeWidth="3" d="M111.646 31.21v5.522m-5.973-2.762v5.524" strokeLinecap="round" strokeLinejoin="round"/>
           <path fill="#FFE6A7" d="M1.5 100.228v57.903l118.415 68.37 136.734-78.94v-57.9L1.5 100.23z"/>

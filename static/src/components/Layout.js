@@ -21,7 +21,9 @@ import Browser from 'detect-browser';
 import Constants from '../Constants';
 import '../style/style.styl';
 
-const PARALLAX_REF = 'PARALLAX_REF';
+const REF_PARALLAX = 'PARALLAX_REF';
+const REF_SMALL_ISLANDS = "SMALL_ISLANDS_REF";
+const REF_LARGE_ISLANDS = "LARGE_ISLANDS_REF";
 
 type State = {
   count: number,
@@ -31,13 +33,34 @@ type State = {
   secretCount: number,
   showStats: boolean,
   statsHasBeenShown: boolean,
-  changeCount: boolean
+  changeCount: boolean,
+  pausedSmallIslands: Array<boolean>,
+  pausedLargeIslands: Array<boolean>
 };
 
 let changeCountTimeout: number;
 
+function isVisible(el, num): boolean {
+  const rect = el.getBoundingClientRect();
+  return ((rect.top >= -20 && rect.top <= window.innerHeight) ||
+    (rect.bottom >= -20 && rect.bottom <= window.innerHeight)) &&
+    ((rect.left >= -20 && rect.left <= window.innerWidth) ||
+    (rect.right >= -20 && rect.right <= window.innerWidth));
+}
+
 const Layout = React.createClass({
   getInitialState(): State {
+    const pausedLargeIslands = [false];
+    const pausedSmallIslands = [];
+
+    for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
+      pausedSmallIslands.push(false);
+    }
+
+    for (let i = 0; i < Constants.LARGE_ISLAND_COUNT; i++) {
+      pausedLargeIslands.push(false);
+    }
+
     return {
       count: 0,
       uniqueUsers: 0,
@@ -46,16 +69,39 @@ const Layout = React.createClass({
       secretCount: 0,
       showStats: false,
       statsHasBeenShown: false,
-      changeCount: false
+      changeCount: false,
+      pausedLargeIslands,
+      pausedSmallIslands
     };
   },
 
   componentWillMount() {
     AirhornStatsStore.on('change', this.updateStats);
+    window.addEventListener('resize', this.resized);
   },
 
   componentDidMount() {
-    new Parallax(this.refs[PARALLAX_REF]);
+    new Parallax(this.refs[REF_PARALLAX]);
+    this.resized();
+  },
+
+  resized() {
+    const pausedSmallIslands = [];
+    for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
+      const visible = isVisible(this.refs[REF_SMALL_ISLANDS].children[i], i);
+      pausedSmallIslands.push(!visible);
+    }
+
+    const pausedLargeIslands = [];
+    for (let i = 0; i < Constants.LARGE_ISLAND_COUNT; i++) {
+      const visible = isVisible(this.refs[REF_LARGE_ISLANDS].children[i], i);
+      pausedLargeIslands.push(!visible);
+    }
+
+    this.setState({
+      pausedSmallIslands,
+      pausedLargeIslands
+    });
   },
 
   updateStats() {
@@ -86,7 +132,7 @@ const Layout = React.createClass({
     const smallIslands = [];
     for (let i = 0; i < Constants.SMALL_ISLAND_COUNT; i++) {
       const type = i % Constants.UNIQUE_SMALL_ISLAND_COUNT;
-      smallIslands.push(<IslandSmall number={i} type={type} key={i} />);
+      smallIslands.push(<IslandSmall number={i} type={type} key={i} paused={this.state.pausedSmallIslands[i]} />);
     }
 
     const clouds = [];
@@ -103,20 +149,23 @@ const Layout = React.createClass({
     return (
       <div className={`container ${Browser.name}`}>
         <Content />
-        <IslandPond />
-        <IslandTree />
-        <IslandTrees />
-        <IslandTent />
-        <IslandDoubleTree />
-        <IslandForest />
-        <IslandForest number="1" />
-        <IslandLog />
-        <IslandShrooms />
-        <IslandShrooms number="1" />
 
-        {smallIslands}
+        <div ref={REF_LARGE_ISLANDS}>
+          <IslandPond paused={this.state.pausedLargeIslands[0]} />
+          <IslandTree paused={this.state.pausedLargeIslands[1]} />
+          <IslandTrees paused={this.state.pausedLargeIslands[2]} />
+          <IslandTent paused={this.state.pausedLargeIslands[3]} />
+          <IslandDoubleTree paused={this.state.pausedLargeIslands[4]} />
+          <IslandForest paused={this.state.pausedLargeIslands[5]} />
+          <IslandForest paused={this.state.pausedLargeIslands[6]} number="1" />
+          <IslandLog paused={this.state.pausedLargeIslands[7]} />
+          <IslandShrooms paused={this.state.pausedLargeIslands[8]} />
+          <IslandShrooms paused={this.state.pausedLargeIslands[9]} number="1" />
+        </div>
 
-        <div id="parallax" ref={PARALLAX_REF}>
+        <div ref={REF_SMALL_ISLANDS}>{smallIslands}</div>
+
+        <div id="parallax" ref={REF_PARALLAX}>
           {clouds}
         </div>
 

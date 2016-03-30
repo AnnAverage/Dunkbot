@@ -14,10 +14,11 @@ const islands = [
 
 type Props = {
   type: number,
-  number: number
+  number: number,
+  paused: boolean
 };
 
-export default ({type, number}: Props): React.Element => {
-  const className = `island small-island small-${number}`;
+export default ({type, number, paused}: Props): React.Element => {
+  const className = `island small-island small-${number} ${paused ? 'paused' : ''}`;
   return <img className={className} src={islands[type]} />;
 };

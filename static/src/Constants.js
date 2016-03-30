@@ -4,6 +4,7 @@ export default {
   AIRHORN_URL: 'https://airhorn.solutions',
   SMALL_ISLAND_COUNT: 12,
   UNIQUE_SMALL_ISLAND_COUNT: 6,
+  LARGE_ISLAND_COUNT: 10,
   CLOUD_COUNT: 8,
   UNIQUE_CLOUD_COUNT: 4,
   VIDEO_LENGTH: 1700,

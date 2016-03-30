@@ -3,8 +3,12 @@
 
 import React from 'react';
 
-export default (): React.Element => (
-  <svg className="island pond" xmlns="http://www.w3.org/2000/svg" width="259" height="251">
+type Props = {
+  paused: boolean
+};
+
+export default ({paused}: Props): React.Element => (
+  <svg className={`island pond ${paused ? 'paused' : ''}`} xmlns="http://www.w3.org/2000/svg" width="259" height="251">
     <g fill="none" fill-rule="evenodd">
       <path fill="#FFE6A7" d="M1.5012 123.2279v57.903l118.413 68.367 136.734-78.942v-57.903l-255.147 10.575z"/>
       <path fill="#EDD194" d="M118.8135 118.3652v130.5l1.101.633 136.734-78.942v-57.903l-137.835 5.712z"/>

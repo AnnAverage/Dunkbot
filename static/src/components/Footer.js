@@ -22,6 +22,17 @@ const Footer = React.createClass({
       }
     }
 
+    let statsBtn2Classes = 'crossfade';
+
+    if (statsHasBeenShown) {
+      if (showStatsPanel) {
+        statsBtn2Classes += ' three';
+      }
+      else {
+        statsBtn2Classes += ' three-reverse';
+      }
+    }
+
     let toolTip = 'Click for more Stats';
     if (showStatsPanel) {
       toolTip = '';
@@ -41,7 +52,11 @@ const Footer = React.createClass({
               </div>
             </div>
             <div className="stats-btn">
-              <img ref="statsBtn"
+              <img
+                src={Constants.Image.ICON_CLOSE}
+                className={statsBtn2Classes}
+                onClick={StatsActions.hideStatsPanel} />
+              <img
                 src={Constants.Image.ICON_ABOUT}
                 className={statsBtnClasses}
                 data-tip={toolTip} />

@@ -7,11 +7,9 @@ offset = 255px;
   animation-fill-mode: forwards;
 
   &.one {
+    transform: translate3d(0px, offset, 0px);
     animation-name: crossfade-one;
-
-    .stats-btn {
-      animation-name: crossfade-one-btn;
-    }
+    animation-delay: 300ms;
   }
 
   &.two {
@@ -19,15 +17,21 @@ offset = 255px;
   }
 
   &.one-reverse {
+    transform: translate3d(0px, 0px, 0px);
+    animation-delay: 300ms;
     animation-name: crossfade-one-reverse;
-
-    .stats-btn {
-      animation-name: crossfade-one-btn-reverse;
-    }
   }
 
   &.two-reverse {
     animation-name: crossfade-two-reverse;
+  }
+
+  &.three {
+    animation-name: crossfade-three;
+  }
+
+  &.three-reverse {
+    animation-name: crossfade-three-reverse;
   }
 }
 
@@ -39,15 +43,6 @@ offset = 255px;
   to {
     transform: translate3d(0px, 0px, 0px);
     visibility: visible;
-  }
-}
-
-@keyframes crossfade-one-btn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 
@@ -84,11 +79,22 @@ offset = 255px;
   }
 }
 
-@keyframes crossfade-one-btn-reverse {
+@keyframes crossfade-three {
   from {
-    opacity: 1;
+    transform: translate3d(0px, 0px, 0px);
   }
+
   to {
-    opacity: 0;
+    transform: translate3d(0px, - offset, 0px);
+  }
+}
+
+@keyframes crossfade-three-reverse {
+  from {
+    transform: translate3d(0px, - offset, 0px);
+  }
+
+  to {
+    transform: translate3d(0px, 0px, 0px);
   }
 }

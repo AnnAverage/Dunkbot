@@ -42,7 +42,6 @@ const StatsPanel = ({
 
   return (
     <div className={`stats-panel crossfade ${show ? 'one' : 'one-reverse'}`}>
-      <img src={Constants.Image.ICON_CLOSE} className="icon-close" onClick={StatsActions.hideStatsPanel} />
       <StatsRow icon={Constants.Image.ICON_PLAYS} label="Plays" value={count} />
       <StatsRow icon={Constants.Image.ICON_USERS} label="Unique Users" value={uniqueUsers} />
       <StatsRow icon={Constants.Image.ICON_SERVERS} label="Unique Servers" value={uniqueGuilds} />

@@ -35,7 +35,7 @@ export default {
   },
 
   Audio: {
-    AIRHORN: require('../../audio/airhorn_default.wav'),
+    AIRHORN: require('../../audio/airhorn_default.wav')
   },
 
   Animation: {
@@ -67,7 +67,6 @@ export default {
   },
 
   Social: {
-    MESSAGE_TWITTER: 'This Discord bot makes airhorn sounds ayy lmao peep dis:',
-    MESSAGE_FACEBOOK: ''
+    MESSAGE_TWITTER: 'This Discord bot makes airhorn sounds ayy lmao #ReadyForHorning'
   }
 };

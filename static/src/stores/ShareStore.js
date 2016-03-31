@@ -6,11 +6,11 @@ import Constants from '../Constants';
 
 class ShareStore extends EventEmitter {
   shareWithFacebook() {
-    this.open(`http://www.facebook.com/sharer.php?u=${Constants.AIRHORN_URL}`);
+    this.open(Constants.Social.URL_FACEBOOK);
   }
 
   shareWithTwitter() {
-    this.open(`https://twitter.com/share?text=${Constants.Social.MESSAGE_TWITTER}`);
+    this.open(Constants.Social.URL_TWITTER);
   }
 
   open(url: string) {

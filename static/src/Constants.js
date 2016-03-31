@@ -1,7 +1,8 @@
+const AIRHORN_URL = 'https://airhorn.solutions'
+
 export default {
-  GITHUB_URL: 'https://github.com/hammerandchisel/airhornbot',
   DISCORD_URL: 'https://discordapp.com?utm_source=airhornsubtext&utm_medium=website&utm_campaign=airhorn',
-  AIRHORN_URL: 'https://airhorn.solutions',
+  AIRHORN_URL,
   SMALL_ISLAND_COUNT: 12,
   UNIQUE_SMALL_ISLAND_COUNT: 6,
   LARGE_ISLAND_COUNT: 10,
@@ -67,6 +68,13 @@ export default {
   },
 
   Social: {
-    MESSAGE_TWITTER: 'This Discord bot makes airhorn sounds ayy lmao #ReadyForHorning'
+    MESSAGE_TWITTER: 'This Discord bot makes airhorn sounds ayy lmao',
+    HASHTAGS_TWITTER: 'ReadyForHorning',
+    get URL_TWITTER () {
+      return `https://twitter.com/share?text=${this.MESSAGE_TWITTER}&hashtags=${this.HASHTAGS_TWITTER}`;
+    },
+    get URL_FACEBOOK () {
+      return `http://www.facebook.com/sharer.php?u=${AIRHORN_URL}`;
+    }
   }
 };

@@ -1,6 +1,6 @@
 export default {
   GITHUB_URL: 'https://github.com/hammerandchisel/airhornbot',
-  DISCORD_URL: 'https://discordapp.com',
+  DISCORD_URL: 'https://discordapp.com?utm_source=airhornsubtext&utm_medium=website&utm_campaign=airhorn',
   AIRHORN_URL: 'https://airhorn.solutions',
   SMALL_ISLAND_COUNT: 12,
   UNIQUE_SMALL_ISLAND_COUNT: 6,

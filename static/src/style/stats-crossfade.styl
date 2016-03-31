@@ -1,29 +1,30 @@
 offset = 255px;
+duration = 400ms;
+fast-duration = 200ms;
 
 .crossfade {
-  animation-duration: 500ms;
+  animation-duration: duration;
   animation-timing-function: cubic-bezier(0.5, -0.25, 0.3, 1.25);
-  animation-direction: alternate;
   animation-fill-mode: forwards;
 
   &.one {
-    transform: translate3d(0px, offset, 0px);
+    animation-duration: fast-duration;
     animation-name: crossfade-one;
-    animation-delay: 300ms;
   }
 
   &.two {
     animation-name: crossfade-two;
+    animation-delay: delay;
   }
 
   &.one-reverse {
-    transform: translate3d(0px, 0px, 0px);
-    animation-delay: 300ms;
+    animation-duration: fast-duration;
     animation-name: crossfade-one-reverse;
   }
 
   &.two-reverse {
     animation-name: crossfade-two-reverse;
+    animation-delay: delay;
   }
 
   &.three {

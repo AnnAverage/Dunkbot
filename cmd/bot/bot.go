@@ -271,7 +271,7 @@ func getRandomSound(stype int) *Sound {
 }
 
 // Enqueues a play into the ratelimit/buffer guild queue
-func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, stype int) {
+func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, khaled bool, stype int) {
 	// Grab the users voice channel
 	channel := getCurrentVoiceChannel(user, guild)
 	if channel == nil {
@@ -294,7 +294,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, sty
 		UserID:    user.ID,
 		Sound:     sound,
 		Forced:    forced,
-		Khaled:    (stype == TYPE_KHALED),
+		Khaled:    khaled,
 	}
 
 	// Check if we already have a connection to this guild
@@ -422,8 +422,9 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	parts := strings.Split(strings.ToLower(m.Content), " ")
 	var (
-		sound *Sound
-		stype int = TYPE_AIRHORN
+		sound  *Sound
+		stype  int = TYPE_AIRHORN
+		khaled bool
 	)
 
 	if parts[0] == "!airhorn" || parts[0] == "!anotha" || parts[0] == "!anothaone" || parts[0] == "!cena" || parts[0] == "!johncena" {
@@ -478,10 +479,10 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if parts[0] == "!cena" || parts[0] == "!johncena" {
 			stype = TYPE_CENA
 		} else if strings.HasPrefix(parts[0], "!anotha") {
-			stype = TYPE_KHALED
+			khaled = true
 		}
 
-		go enqueuePlay(m.Author, guild, sound, stype)
+		go enqueuePlay(m.Author, guild, sound, khaled, stype)
 	}
 }
 

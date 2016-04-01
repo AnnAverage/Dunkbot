@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import AirhornStatsStore from '../stores/AirhornStatsStore';
 import Cloud from './Cloud';
 import IslandPond from './islands/IslandPond';
@@ -24,6 +25,7 @@ import '../style/style.styl';
 const REF_PARALLAX = 'PARALLAX_REF';
 const REF_SMALL_ISLANDS = "SMALL_ISLANDS_REF";
 const REF_LARGE_ISLANDS = "LARGE_ISLANDS_REF";
+const REF_FOOTER = "FOOTER_REF";
 
 type State = {
   count: number,
@@ -35,7 +37,8 @@ type State = {
   statsHasBeenShown: boolean,
   changeCount: boolean,
   pausedSmallIslands: Array<boolean>,
-  pausedLargeIslands: Array<boolean>
+  pausedLargeIslands: Array<boolean>,
+  footerHeight: number
 };
 
 let changeCountTimeout: number;
@@ -71,7 +74,8 @@ const Layout = React.createClass({
       statsHasBeenShown: false,
       changeCount: false,
       pausedLargeIslands,
-      pausedSmallIslands
+      pausedSmallIslands,
+      footerHeight: 80
     };
   },
 
@@ -82,7 +86,7 @@ const Layout = React.createClass({
 
   componentDidMount() {
     new Parallax(this.refs[REF_PARALLAX]);
-    this.resized();
+    setTimeout(() => this.resized(), 100);
   },
 
   resized() {
@@ -98,9 +102,12 @@ const Layout = React.createClass({
       pausedLargeIslands.push(!visible);
     }
 
+    const footerHeight = ReactDOM.findDOMNode(this.refs[REF_FOOTER]).getBoundingClientRect().height;
+
     this.setState({
       pausedSmallIslands,
-      pausedLargeIslands
+      pausedLargeIslands,
+      footerHeight
     });
   },
 
@@ -176,8 +183,10 @@ const Layout = React.createClass({
           uniqueGuilds={this.state.uniqueGuilds}
           uniqueChannels={this.state.uniqueChannels}
           secretCount={this.state.secretCount}
-          hasBeenShown={this.state.statsHasBeenShown} />
+          hasBeenShown={this.state.statsHasBeenShown}
+          bottom={this.state.footerHeight} />
         <Footer
+          ref={REF_FOOTER}
           count={this.state.count}
           changeCount={this.state.changeCount}
           showStatsPanel={this.state.showStats}

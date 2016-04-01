@@ -7,6 +7,46 @@ import * as ShareActions from '../actions/ShareActions';
 import ShareStore from '../stores/ShareStore';
 import Constants from '../Constants';
 
+const messages = [
+  ['"Airhorn Solutions saved my business ', {text: 'and', className: 'dark'}, ' my marriage" - R. Nelly'],
+  [`"At first I didn't know what to expect,`, {text: ` but then I did!`, className: 'dark'}, `" - Ann Chovi`],
+  [
+    `“Knowing airhorns are now in Discord fills me with `,
+    {text: `determination`, className: 'dark'},
+    `.” - T. Fox`
+  ],
+  [
+    `“Airhorn Solutions literally solved `,
+    {text: `every single one`, className: 'dark'},
+    ` of my problems.” - Noh Won`
+  ],
+  [`“The key is to make it. The key is to `, {text: `never give up`, className: 'dark'}, `.” - H. Khaldius`]
+];
+
+const FooterMessage = ({text}) => {
+  let texts = [];
+  for (let i = 0; i < text.length; i++) {
+    let classes: string;
+    let words: string;
+    if (typeof text[i] === 'string') {
+      texts.push(<span className="normal-text" key={`mess-${i}`}>{text[i]}</span>);
+    }
+    else {
+      classes = text[i].className;
+      words = text[i].text;
+      texts.push(<span className={text[i].className} key={`mess-${i}`}>{text[i].text}</span>);
+    }
+  }
+
+  return (
+    <div className="main-text">
+      {texts}
+    </div>
+  );
+};
+
+const MESSAGE_INDEX = Math.floor(Math.random() * messages.length);
+
 const Footer = React.createClass({
   render() {
     const {count, changeCount, showStatsPanel, statsHasBeenShown} = this.props;
@@ -63,11 +103,7 @@ const Footer = React.createClass({
             </div>
           </div>
         </div>
-        <div className="main-text">
-          <span className="normal-text">"Airhorn Solutions saved my business</span>
-          <span className="dark">&nbsp;and&nbsp;</span>
-          <span className="normal-text">my marriage" - R. Nelly</span>
-        </div>
+        <FooterMessage text={messages[MESSAGE_INDEX]} />
         <div className="social">
           <img src={Constants.Image.ICON_TWITTER} onClick={ShareActions.withTwitter} />
           <img src={Constants.Image.ICON_FACEBOOK} onClick={ShareActions.withFacebook} />

@@ -5,6 +5,8 @@ import numeral from 'numeral';
 import * as StatsActions from '../actions/StatsActions';
 import Constants from '../Constants';
 
+const BOTTOM_PADDING = 8;
+
 const StatsRow = ({icon, label, value}) => {
   return (
     <div className="stats-row">
@@ -24,7 +26,8 @@ type StatsPanelProps = {
   uniqueChannels: number,
   secretCount: number,
   show: boolean,
-  hasBeenShown: boolean
+  hasBeenShown: boolean,
+  bottom: number
 };
 
 const StatsPanel = ({
@@ -34,14 +37,15 @@ const StatsPanel = ({
   uniqueChannels,
   secretCount,
   show,
-  hasBeenShown
+  hasBeenShown,
+  bottom
 }: StatsPanelProps) => {
   if (!hasBeenShown) {
     return <noscript />;
   }
 
   return (
-    <div className={`stats-panel crossfade ${show ? 'one' : 'one-reverse'}`}>
+    <div className={`stats-panel crossfade ${show ? 'one' : 'one-reverse'}`} style={{bottom: bottom + BOTTOM_PADDING}}>
       <StatsRow icon={Constants.Image.ICON_PLAYS} label="Plays" value={count} />
       <StatsRow icon={Constants.Image.ICON_USERS} label="Unique Users" value={uniqueUsers} />
       <StatsRow icon={Constants.Image.ICON_SERVERS} label="Unique Servers" value={uniqueGuilds} />

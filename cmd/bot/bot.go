@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"strconv"
 	"strings"
 	"time"
 
@@ -37,6 +38,9 @@ var (
 	// Sound Types
 	TYPE_AIRHORN = 0
 	TYPE_KHALED  = 1
+
+	// Shard (or -1)
+	SHARDS []string = make([]string, 0)
 )
 
 // Play represents an individual use of the !airhorn command
@@ -407,6 +411,21 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
+		// If we're in sharding mode, test whether this message is relevant to us
+		if len(SHARDS) != 0 {
+			ok := false
+			for _, shard := range SHARDS {
+				if string(channel.GuildID[len(channel.GuildID)-1]) == shard {
+					ok = true
+					break
+				}
+			}
+
+			if !ok {
+				return
+			}
+		}
+
 		guild, _ := discord.State.Guild(channel.GuildID)
 		if guild == nil {
 			log.WithFields(log.Fields{
@@ -442,9 +461,25 @@ func main() {
 	var (
 		Token = flag.String("t", "", "Discord Authentication Token")
 		Redis = flag.String("r", "", "Redis Connection String")
+		Shard = flag.String("s", "", "Integers to shard by")
 		err   error
 	)
 	flag.Parse()
+
+	// Make sure shard is either empty, or an integer
+	if *Shard != "" {
+		SHARDS = strings.Split(*Shard, ",")
+
+		for _, shard := range SHARDS {
+			if _, err := strconv.Atoi(shard); err != nil {
+				log.WithFields(log.Fields{
+					"shard": shard,
+					"error": err,
+				}).Fatal("Invalid Shard")
+				return
+			}
+		}
+	}
 
 	// Preload all the sounds
 	log.Info("Preloading sounds...")

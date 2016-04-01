@@ -415,7 +415,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if len(SHARDS) != 0 {
 			ok := false
 			for _, shard := range SHARDS {
-				if len(channel.GuildID) && string(channel.GuildID[len(channel.GuildID)-1]) == shard {
+				if len(channel.GuildID) >= 1 && string(channel.GuildID[len(channel.GuildID)-1]) == shard {
 					ok = true
 					break
 				}

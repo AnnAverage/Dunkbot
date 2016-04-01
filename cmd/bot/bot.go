@@ -224,6 +224,21 @@ func getCurrentVoiceChannel(user *discordgo.User, guild *discordgo.Guild) *disco
 	return nil
 }
 
+// Whether a guild id is in this shard
+func shardContains(guildid string) bool {
+	if len(SHARDS) != 0 {
+		ok := false
+		for _, shard := range SHARDS {
+			if len(guildid) >= 5 && string(guildid[len(guildid)-5]) == shard {
+				ok = true
+				break
+			}
+		}
+		return ok
+	}
+	return true
+}
+
 // Returns a random integer between min and max
 func randomRange(min, max int) int {
 	rand.Seed(time.Now().Unix())
@@ -411,6 +426,10 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 }
 
 func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+	if !shardContains(event.Guild.ID) {
+		return
+	}
+
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
 			s.ChannelMessageSend(channel.ID, "**AIRHORN BOT READY FOR HORNING. TYPE `!AIRHORN` IN CHAT TO ACTIVATE**")
@@ -438,18 +457,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		// If we're in sharding mode, test whether this message is relevant to us
-		if len(SHARDS) != 0 {
-			ok := false
-			for _, shard := range SHARDS {
-				if len(channel.GuildID) >= 1 && string(channel.GuildID[len(channel.GuildID)-1]) == shard {
-					ok = true
-					break
-				}
-			}
-
-			if !ok {
-				return
-			}
+		if !shardContains(channel.GuildID) {
+			return
 		}
 
 		guild, _ := discord.State.Guild(channel.GuildID)

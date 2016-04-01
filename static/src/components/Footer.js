@@ -20,7 +20,7 @@ const messages = [
     {text: `every single one`, className: 'dark'},
     ` of my problems.” - Noh Won`
   ],
-  [`“The key is to make it. The key is to `, {text: `never give up`, className: 'dark'}, `.” - H. Khaldius`]
+  [`“The key is to make it. The key is to `, {text: `never give up`, className: 'dark'}, `.” - H. Khalidius`]
 ];
 
 const FooterMessage = ({text}) => {

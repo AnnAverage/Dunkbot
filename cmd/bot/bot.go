@@ -32,12 +32,16 @@ var (
 	// Sound attributes
 	AIRHORN_SOUND_RANGE = 0
 	KHALED_SOUND_RANGE  = 0
-	BITRATE             = 128
-	MAX_QUEUE_SIZE      = 6
+	CENA_SOUND_RANGE    = 0
+
+	// Sound encoding settings
+	BITRATE        = 128
+	MAX_QUEUE_SIZE = 6
 
 	// Sound Types
 	TYPE_AIRHORN = 0
 	TYPE_KHALED  = 1
+	TYPE_CENA    = 2
 
 	// Shard (or -1)
 	SHARDS []string = make([]string, 0)
@@ -112,6 +116,15 @@ var KHALED []*Sound = []*Sound{
 	createSound("one_echo", 1, 250, TYPE_KHALED),
 }
 
+var CENA []*Sound = []*Sound{
+	createSound("airhorn", 1, 250, TYPE_CENA),
+	createSound("echo", 1, 250, TYPE_CENA),
+	createSound("full", 1, 250, TYPE_CENA),
+	createSound("jc", 1, 250, TYPE_CENA),
+	createSound("nameis", 1, 250, TYPE_CENA),
+	createSound("spam", 1, 250, TYPE_CENA),
+}
+
 // Encode reads data from ffmpeg and encodes it using gopus
 func (s *Sound) Encode() {
 	encoder, err := gopus.NewEncoder(48000, 2, gopus.Audio)
@@ -151,8 +164,10 @@ func (s *Sound) Load() error {
 	var path string
 	if s.Type == TYPE_AIRHORN {
 		path = fmt.Sprintf("audio/airhorn_%v.wav", s.Name)
-	} else {
+	} else if s.Type == TYPE_KHALED {
 		path = fmt.Sprintf("audio/another_%v.wav", s.Name)
+	} else if s.Type == TYPE_CENA {
+		path = fmt.Sprintf("audio/jc_%v.wav", s.Name)
 	}
 
 	ffmpeg := exec.Command("ffmpeg", "-i", path, "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
@@ -229,10 +244,20 @@ func getRandomSound(stype int) *Sound {
 				return item
 			}
 		}
-	} else {
+	} else if stype == TYPE_KHALED {
 		number := randomRange(0, KHALED_SOUND_RANGE)
 
 		for _, item := range KHALED {
+			i += item.Weight
+
+			if number < i {
+				return item
+			}
+		}
+	} else if stype == TYPE_CENA {
+		number := randomRange(0, CENA_SOUND_RANGE)
+
+		for _, item := range CENA {
 			i += item.Weight
 
 			if number < i {
@@ -246,7 +271,7 @@ func getRandomSound(stype int) *Sound {
 }
 
 // Enqueues a play into the ratelimit/buffer guild queue
-func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, isKhaled bool) {
+func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, stype int) {
 	// Grab the users voice channel
 	channel := getCurrentVoiceChannel(user, guild)
 	if channel == nil {
@@ -260,7 +285,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, isK
 	var forced bool = true
 	if sound == nil {
 		forced = false
-		sound = getRandomSound(TYPE_AIRHORN)
+		sound = getRandomSound(stype)
 	}
 
 	play := &Play{
@@ -269,7 +294,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, sound *Sound, isK
 		UserID:    user.ID,
 		Sound:     sound,
 		Forced:    forced,
-		Khaled:    isKhaled,
+		Khaled:    (stype == TYPE_KHALED),
 	}
 
 	// Check if we already have a connection to this guild
@@ -397,11 +422,11 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	parts := strings.Split(strings.ToLower(m.Content), " ")
 	var (
-		sound  *Sound
-		khaled bool
+		sound *Sound
+		stype int = TYPE_AIRHORN
 	)
 
-	if parts[0] == "!airhorn" || parts[0] == "!anotha" || parts[0] == "!anoathaone" {
+	if parts[0] == "!airhorn" || parts[0] == "!anotha" || parts[0] == "!anothaone" || parts[0] == "!cena" || parts[0] == "!johncena" {
 		channel, _ := discord.State.Channel(m.ChannelID)
 		if channel == nil {
 			log.WithFields(log.Fields{
@@ -449,11 +474,14 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 		}
 
-		if strings.HasPrefix(parts[0], "!anotha") {
-			khaled = true
+		// Select mode
+		if parts[0] == "!cena" || parts[0] == "!johncena" {
+			stype = TYPE_CENA
+		} else if strings.HasPrefix(parts[0], "!anotha") {
+			stype = TYPE_KHALED
 		}
 
-		go enqueuePlay(m.Author, guild, sound, khaled)
+		go enqueuePlay(m.Author, guild, sound, stype)
 	}
 }
 
@@ -491,6 +519,12 @@ func main() {
 	log.Info("Preloading loyalty...")
 	for _, sound := range KHALED {
 		KHALED_SOUND_RANGE += sound.Weight
+		sound.Load()
+	}
+
+	log.Info("PRELOADING THE JOHN CENA")
+	for _, sound := range CENA {
+		CENA_SOUND_RANGE += sound.Weight
 		sound.Load()
 	}
 

@@ -241,7 +241,7 @@ func shardContains(guildid string) bool {
 
 // Returns a random integer between min and max
 func randomRange(min, max int) int {
-	rand.Seed(time.Now().Unix())
+	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Intn(max-min) + min
 }
 

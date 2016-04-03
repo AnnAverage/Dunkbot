@@ -521,6 +521,9 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			} else if scontains(parts[len(parts)-1], "aps") && ourShard {
 				s.ChannelMessageSend(m.ChannelID, ":ok_hand: give me a sec m8")
 				go calculateAirhornsPerSecond(m.ChannelID)
+			} else if scontains(parts[len(parts)-1], "where") && ourShard {
+				s.ChannelMessageSend(m.ChannelID,
+					fmt.Sprintf("its a me, shard %v", string(guild.ID[len(guild.ID)-5])))
 			}
 			return
 		}

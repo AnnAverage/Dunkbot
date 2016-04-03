@@ -482,7 +482,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if len(m.Mentions) > 0 {
 		if m.Mentions[0].ID == s.State.Ready.User.ID && m.Author.ID == OWNER && len(parts) > 0 {
-			if scontains(parts[1], "stats") && ourShard {
+			if scontains(parts[len(parts)-1], "stats") && ourShard {
 				users := 0
 				for _, guild := range s.State.Ready.Guilds {
 					users += len(guild.Members)
@@ -492,7 +492,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					"I'm in %v servers with %v users.",
 					len(s.State.Ready.Guilds),
 					users))
-			} else if scontains(parts[1], "status") {
+			} else if scontains(parts[len(parts)-1], "status") {
 				guilds := 0
 				for _, guild := range s.State.Ready.Guilds {
 					if shardContains(guild.ID) {

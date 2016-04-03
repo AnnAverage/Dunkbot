@@ -447,7 +447,7 @@ func calculateAirhornsPerSecond(cid string) {
 	time.Sleep(time.Second * 10)
 	latest, _ := strconv.Atoi(rcli.Get("airhorn:a:total").Val())
 
-	discord.ChannelMessageSend(cid, fmt.Sprintf("Current APS: %v", latest-current))
+	discord.ChannelMessageSend(cid, fmt.Sprintf("Current APS: %v", (float64(latest-current))/10.0))
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -517,7 +517,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					log.Info("Got DIE request, exiting...")
 					os.Exit(0)
 				}
-			} else if scontains(parts[len(parts)-1], "aps") {
+			} else if scontains(parts[len(parts)-1], "aps") && ourShard {
 				s.ChannelMessageSend(m.ChannelID, ":ok_hand: give me a sec m8")
 				go calculateAirhornsPerSecond(m.ChannelID)
 			}

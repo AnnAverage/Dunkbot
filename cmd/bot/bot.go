@@ -515,6 +515,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				shard := parts[len(parts)-1]
 				if len(SHARDS) == 0 || scontains(shard, SHARDS...) {
 					log.Info("Got DIE request, exiting...")
+					s.ChannelMessageSend(m.ChannelID, ":ok_hand: goodbye cruel world")
 					os.Exit(0)
 				}
 			} else if scontains(parts[len(parts)-1], "aps") && ourShard {

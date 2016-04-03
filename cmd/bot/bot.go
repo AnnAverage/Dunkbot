@@ -43,6 +43,9 @@ var (
 	TYPE_KHALED  = 1
 	TYPE_CENA    = 2
 
+	// Owner
+	OWNER string
+
 	// Shard (or -1)
 	SHARDS []string = make([]string, 0)
 )
@@ -430,39 +433,86 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 	}
 }
 
+func scontains(key string, options ...string) bool {
+	for _, item := range options {
+		if item == key {
+			return true
+		}
+	}
+	return false
+}
+
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	parts := strings.Split(strings.ToLower(m.Content), " ")
 	var (
-		sound  *Sound
-		stype  int = TYPE_AIRHORN
-		khaled bool
+		sound    *Sound
+		stype    int = TYPE_AIRHORN
+		khaled   bool
+		ourShard = true
 	)
 
-	if parts[0] == "!airhorn" || parts[0] == "!anotha" || parts[0] == "!anothaone" || parts[0] == "!cena" || parts[0] == "!johncena" {
-		channel, _ := discord.State.Channel(m.ChannelID)
-		if channel == nil {
-			log.WithFields(log.Fields{
-				"channel": m.ChannelID,
-				"message": m.ID,
-			}).Warning("Failed to grab channel")
+	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) != 1) {
+		return
+	}
+
+	parts := strings.Split(strings.ToLower(m.Content), " ")
+
+	channel, _ := discord.State.Channel(m.ChannelID)
+	if channel == nil {
+		log.WithFields(log.Fields{
+			"channel": m.ChannelID,
+			"message": m.ID,
+		}).Warning("Failed to grab channel")
+		return
+	}
+
+	guild, _ := discord.State.Guild(channel.GuildID)
+	if guild == nil {
+		log.WithFields(log.Fields{
+			"guild":   channel.GuildID,
+			"channel": channel,
+			"message": m.ID,
+		}).Warning("Failed to grab guild")
+		return
+	}
+
+	// If we're in sharding mode, test whether this message is relevant to us
+	if !shardContains(channel.GuildID) {
+		ourShard = false
+	}
+
+	if len(m.Mentions) > 0 {
+		if m.Mentions[0].ID == s.State.Ready.User.ID && m.Author.ID == OWNER && len(parts) > 0 {
+			if scontains(parts[1], "stats") && ourShard {
+				users := 0
+				for _, guild := range s.State.Ready.Guilds {
+					users += len(guild.Members)
+				}
+
+				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+					"I'm in %v servers with %v users.",
+					len(s.State.Ready.Guilds),
+					users))
+			} else if scontains(parts[1], "status") {
+				guilds := 0
+				for _, guild := range s.State.Ready.Guilds {
+					if shardContains(guild.ID) {
+						guilds += 1
+					}
+				}
+				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+					"  Shard %v contains %v servers",
+					strings.Join(SHARDS, ","),
+					guilds))
+			}
 			return
 		}
+	}
 
-		// If we're in sharding mode, test whether this message is relevant to us
-		if !shardContains(channel.GuildID) {
-			return
-		}
+	if !ourShard {
+		return
+	}
 
-		guild, _ := discord.State.Guild(channel.GuildID)
-		if guild == nil {
-			log.WithFields(log.Fields{
-				"guild":   channel.GuildID,
-				"channel": channel,
-				"message": m.ID,
-			}).Warning("Failed to grab guild")
-			return
-		}
-
+	if scontains(parts[0], "!airhorn", "!anotha", "!anothaone", "!cena", "!johncena") {
 		// Support !airhorn <sound>
 		if len(parts) > 1 {
 			for _, s := range AIRHORNS {
@@ -477,9 +527,9 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		// Select mode
-		if parts[0] == "!cena" || parts[0] == "!johncena" {
+		if scontains(parts[0], "!cena", "!johncena") {
 			stype = TYPE_CENA
-		} else if strings.HasPrefix(parts[0], "!anotha") {
+		} else if scontains(parts[0], "!anotha", "!anothaone") {
 			khaled = true
 		}
 
@@ -492,9 +542,14 @@ func main() {
 		Token = flag.String("t", "", "Discord Authentication Token")
 		Redis = flag.String("r", "", "Redis Connection String")
 		Shard = flag.String("s", "", "Integers to shard by")
+		Owner = flag.String("o", "", "Owner ID")
 		err   error
 	)
 	flag.Parse()
+
+	if *Owner != "" {
+		OWNER = *Owner
+	}
 
 	// Make sure shard is either empty, or an integer
 	if *Shard != "" {

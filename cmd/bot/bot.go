@@ -442,6 +442,14 @@ func scontains(key string, options ...string) bool {
 	return false
 }
 
+func calculateAirhornsPerSecond(cid string) {
+	current, _ := strconv.Atoi(rcli.Get("airhorn:a:total").Val())
+	time.Sleep(time.Second * 10)
+	latest, _ := strconv.Atoi(rcli.Get("airhorn:a:total").Val())
+
+	discord.ChannelMessageSend(cid, fmt.Sprintf("Current APS: %v", latest-current))
+}
+
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var (
 		sound    *Sound
@@ -500,9 +508,18 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					}
 				}
 				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
-					"  Shard %v contains %v servers",
+					"Shard %v contains %v servers",
 					strings.Join(SHARDS, ","),
 					guilds))
+			} else if scontains(parts[len(parts)-2], "die") {
+				shard := parts[len(parts)-1]
+				if len(SHARDS) == 0 || scontains(shard, SHARDS...) {
+					log.Info("Got DIE request, exiting...")
+					os.Exit(0)
+				}
+			} else if scontains(parts[len(parts)-1], "aps") {
+				s.ChannelMessageSend(m.ChannelID, ":ok_hand: give me a sec m8")
+				go calculateAirhornsPerSecond(m.ChannelID)
 			}
 			return
 		}

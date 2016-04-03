@@ -375,24 +375,12 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 			delete(queues, play.GuildID)
 			return err
 		}
-
-		/*
-			err = vc.WaitUntilConnected()
-			if err != nil {
-				log.WithFields(log.Fields{
-					"error": err,
-					"play":  play,
-				}).Error("Failed to join voice channel")
-				vc.Close()
-				delete(queues, play.GuildID)
-				return err
-			}
-		*/
 	}
 
+	// If we need to change channels, do that now
 	if vc.ChannelID != play.ChannelID {
 		vc.ChangeChannel(play.ChannelID, false, false)
-		time.Sleep(time.Millisecond * 200)
+		time.Sleep(time.Millisecond * 125)
 	}
 
 	// Sleep for a specified amount of time before playing the sound
@@ -400,7 +388,6 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 
 	// If we're appreciating this sound, lets play some DJ KHALLLLLEEEEDDDD
 	if play.Khaled {
-		log.Info("KHALED")
 		dj := getRandomSound(TYPE_KHALED)
 		dj.Play(vc)
 	}
@@ -423,6 +410,11 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 	delete(queues, play.GuildID)
 	vc.Disconnect()
 	return nil
+}
+
+func onReady(s *discordgo.Session, event *discordgo.Ready) {
+	log.Info("Recieved READY payload")
+	s.UpdateStatus(0, "airhornbot.com")
 }
 
 func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
@@ -562,6 +554,7 @@ func main() {
 		return
 	}
 
+	discord.AddHandler(onReady)
 	discord.AddHandler(onGuildCreate)
 	discord.AddHandler(onMessageCreate)
 

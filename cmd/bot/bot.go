@@ -631,7 +631,7 @@ func main() {
 	}
 
 	discord.AddHandler(onReady)
-	discord.AddHandler(onGuildCreate)
+	//discord.AddHandler(onGuildCreate)
 	discord.AddHandler(onMessageCreate)
 
 	err = discord.Open()

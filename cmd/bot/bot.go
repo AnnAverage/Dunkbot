@@ -515,7 +515,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					"Shard %v contains %v servers",
 					strings.Join(SHARDS, ","),
 					guilds))
-			} else if scontains(parts[len(parts)-2], "die") {
+			} else if len(parts) >= 3 && scontains(parts[len(parts)-2], "die") {
 				shard := parts[len(parts)-1]
 				if len(SHARDS) == 0 || scontains(shard, SHARDS...) {
 					log.Info("Got DIE request, exiting...")

@@ -33,6 +33,7 @@ var (
 	AIRHORN_SOUND_RANGE = 0
 	KHALED_SOUND_RANGE  = 0
 	CENA_SOUND_RANGE    = 0
+	ETHAN_SOUND_RANGE   = 0
 
 	// Sound encoding settings
 	BITRATE        = 128
@@ -42,12 +43,25 @@ var (
 	TYPE_AIRHORN = 0
 	TYPE_KHALED  = 1
 	TYPE_CENA    = 2
+	TYPE_ETHAN   = 3
 
 	// Owner
 	OWNER string
 
 	// Shard (or -1)
 	SHARDS []string = make([]string, 0)
+
+	// Commands
+	COMMANDS []string = []string{
+		"!airhorn",
+		"!anotha",
+		"!anothaone",
+		"!cena",
+		"!johncena",
+		"!eb",
+		"!ethanbradberry",
+		"!h3h3",
+	}
 )
 
 // Play represents an individual use of the !airhorn command
@@ -128,6 +142,20 @@ var CENA []*Sound = []*Sound{
 	createSound("spam", 1, 250, TYPE_CENA),
 }
 
+var ETHAN []*Sound = []*Sound{
+	createSound("areyou_classic", 100, 250, TYPE_ETHAN),
+	createSound("areyou_condensed", 100, 250, TYPE_ETHAN),
+	createSound("areyou_crazy", 100, 250, TYPE_ETHAN),
+	createSound("areyou_ethan", 100, 250, TYPE_ETHAN),
+	createSound("classic", 100, 250, TYPE_ETHAN),
+	createSound("echo", 100, 250, TYPE_ETHAN),
+	createSound("high", 100, 250, TYPE_ETHAN),
+	createSound("slowandlow", 100, 250, TYPE_ETHAN),
+	createSound("cuts", 30, 250, TYPE_ETHAN),
+	createSound("beat", 30, 250, TYPE_ETHAN),
+	createSound("sodiepop", 1, 250, TYPE_ETHAN),
+}
+
 // Encode reads data from ffmpeg and encodes it using gopus
 func (s *Sound) Encode() {
 	encoder, err := gopus.NewEncoder(48000, 2, gopus.Audio)
@@ -171,6 +199,8 @@ func (s *Sound) Load() error {
 		path = fmt.Sprintf("audio/another_%v.wav", s.Name)
 	} else if s.Type == TYPE_CENA {
 		path = fmt.Sprintf("audio/jc_%v.wav", s.Name)
+	} else if s.Type == TYPE_ETHAN {
+		path = fmt.Sprintf("audio/ethan_%v.wav", s.Name)
 	}
 
 	ffmpeg := exec.Command("ffmpeg", "-i", path, "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
@@ -282,7 +312,16 @@ func getRandomSound(stype int) *Sound {
 				return item
 			}
 		}
+	} else if stype == TYPE_ETHAN {
+		number := randomRange(0, ETHAN_SOUND_RANGE)
 
+		for _, item := range ETHAN {
+			i += item.Weight
+
+			if number < i {
+				return item
+			}
+		}
 	}
 
 	return nil
@@ -537,7 +576,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if scontains(parts[0], "!airhorn", "!anotha", "!anothaone", "!cena", "!johncena") {
+	if scontains(parts[0], COMMANDS...) {
 		// Support !airhorn <sound>
 		if len(parts) > 1 {
 			for _, s := range AIRHORNS {
@@ -554,6 +593,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// Select mode
 		if scontains(parts[0], "!cena", "!johncena") {
 			stype = TYPE_CENA
+		} else if scontains(parts[0], "!eb", "!ethanbradberry", "!h3h3") {
+			stype = TYPE_ETHAN
 		} else if scontains(parts[0], "!anotha", "!anothaone") {
 			khaled = true
 		}
@@ -607,6 +648,12 @@ func main() {
 	log.Info("PRELOADING THE JOHN CENA")
 	for _, sound := range CENA {
 		CENA_SOUND_RANGE += sound.Weight
+		sound.Load()
+	}
+
+	log.Info("I'm ethan bradberry!")
+	for _, sound := range ETHAN {
+		ETHAN_SOUND_RANGE += sound.Weight
 		sound.Load()
 	}
 

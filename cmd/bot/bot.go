@@ -439,7 +439,6 @@ func playSound(play *Play, vc *discordgo.VoiceConnection) (err error) {
 func onReady(s *discordgo.Session, event *discordgo.Ready) {
 	log.Info("Recieved READY payload")
 	s.UpdateStatus(0, "airhornbot.com")
-	s.State.Ready.User.Username = "hackfix"
 }
 
 func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
@@ -586,7 +585,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	parts := strings.Split(strings.ToLower(m.ContentWithMentionsReplaced()), " ")
+	msg := strings.Replace(m.ContentWithMentionsReplaced(), s.State.Ready.User.Username, "username", 1)
+	parts := strings.Split(strings.ToLower(msg), " ")
 
 	channel, _ := discord.State.Channel(m.ChannelID)
 	if channel == nil {

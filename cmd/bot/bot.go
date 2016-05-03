@@ -180,10 +180,10 @@ var COLLECTIONS []*SoundCollection = []*SoundCollection{
 // Create a Sound struct
 func createSound(Name string, Weight int, PartDelay int) *Sound {
 	return &Sound{
-		Name:       Name,
-		Weight:     Weight,
-		PartDelay:  PartDelay,
-		buffer:     make([][]byte, 0),
+		Name:      Name,
+		Weight:    Weight,
+		PartDelay: PartDelay,
+		buffer:    make([][]byte, 0),
 	}
 }
 
@@ -501,13 +501,68 @@ func displayBotStats(cid string) {
 	discord.ChannelMessageSend(cid, buf.String())
 }
 
+func utilSumRedisKeys(keys []string) int {
+	results := make([]*redis.StringCmd, 0)
+
+	rcli.Pipelined(func(pipe *redis.Pipeline) error {
+		for _, key := range keys {
+			results = append(results, pipe.Get(key))
+		}
+		return nil
+	})
+
+	var total int
+	for _, i := range results {
+		t, _ := strconv.Atoi(i.Val())
+		total += t
+	}
+
+	return total
+}
+
+func displayUserStats(cid, uid string) {
+	keys, err := rcli.Keys(fmt.Sprintf("airhorn:*:user:%s:sound:*", uid)).Result()
+	if err != nil {
+		return
+	}
+
+	totalAirhorns := utilSumRedisKeys(keys)
+	discord.ChannelMessageSend(cid, fmt.Sprintf("Total Airhorns: %v", totalAirhorns))
+}
+
+func displayServerStats(cid, sid string) {
+	keys, err := rcli.Keys(fmt.Sprintf("airhorn:*:guild:%s:sound:*", sid)).Result()
+	if err != nil {
+		return
+	}
+
+	totalAirhorns := utilSumRedisKeys(keys)
+	discord.ChannelMessageSend(cid, fmt.Sprintf("Total Airhorns: %v", totalAirhorns))
+}
+
 // Handles bot operator messages, should be refactored (lmao)
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	ourShard := shardContains(g.ID)
 
-	if scontains(parts[len(parts)-1], "stats") && ourShard {
+	if scontains(parts[1], "status") && ourShard {
 		displayBotStats(m.ChannelID)
-	} else if scontains(parts[len(parts)-1], "status") {
+	} else if scontains(parts[1], "stats") && ourShard {
+		if len(m.Mentions) >= 2 {
+			var who string
+			for _, mention := range m.Mentions {
+				if mention.ID != s.State.Ready.User.ID {
+					who = mention.ID
+					break
+				}
+			}
+
+			displayUserStats(m.ChannelID, who)
+		} else if len(parts) >= 3 {
+			displayUserStats(m.ChannelID, parts[2])
+		} else {
+			displayServerStats(m.ChannelID, g.ID)
+		}
+	} else if scontains(parts[1], "shards") {
 		guilds := 0
 		for _, guild := range s.State.Ready.Guilds {
 			if shardContains(guild.ID) {
@@ -518,7 +573,7 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 			"Shard %v contains %v servers",
 			strings.Join(SHARDS, ","),
 			guilds))
-	} else if scontains(parts[len(parts)-1], "aps") && ourShard {
+	} else if scontains(parts[1], "aps") && ourShard {
 		s.ChannelMessageSend(m.ChannelID, ":ok_hand: give me a sec m8")
 		go calculateAirhornsPerSecond(m.ChannelID)
 	}
@@ -526,11 +581,11 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) != 1) {
+	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
 		return
 	}
 
-	parts := strings.Split(strings.ToLower(m.Content), " ")
+	parts := strings.Split(strings.ToLower(m.ContentWithMentionsReplaced()), " ")
 
 	channel, _ := discord.State.Channel(m.ChannelID)
 	if channel == nil {
@@ -552,8 +607,16 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// If this is a mention, it should come from the owner (otherwise we don't care)
-	if len(m.Mentions) > 0 {
-		if m.Mentions[0].ID == s.State.Ready.User.ID && m.Author.ID == OWNER && len(parts) > 0 {
+	if len(m.Mentions) > 0 && m.Author.ID == OWNER && len(parts) > 0 {
+		mentioned := false
+		for _, mention := range m.Mentions {
+			mentioned = (mention.ID == s.State.Ready.User.ID)
+			if mentioned {
+				break
+			}
+		}
+
+		if mentioned {
 			handleBotControlMessages(s, m, parts, guild)
 		}
 		return

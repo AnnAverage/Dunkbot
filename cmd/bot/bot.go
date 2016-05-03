@@ -298,8 +298,8 @@ func randomRange(min, max int) int {
 	return rand.Intn(max-min) + min
 }
 
-// Prepares and enqueues a play into the ratelimit/buffer guild queue
-func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, coll *SoundCollection, sound *Sound) {
+// Prepares a play
+func createPlay(user *discordgo.User, guild *discordgo.Guild, coll *SoundCollection, sound *Sound) *Play {
 	// Grab the users voice channel
 	channel := getCurrentVoiceChannel(user, guild)
 	if channel == nil {
@@ -307,7 +307,7 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, coll *SoundCollec
 			"user":  user.ID,
 			"guild": guild.ID,
 		}).Warning("Failed to find channel to play sound in")
-		return
+		return nil
 	}
 
 	// Create the play
@@ -334,6 +334,16 @@ func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, coll *SoundCollec
 			Sound:     coll.ChainWith.Random(),
 			Forced:    play.Forced,
 		}
+	}
+
+	return play
+}
+
+// Prepares and enqueues a play into the ratelimit/buffer guild queue
+func enqueuePlay(user *discordgo.User, guild *discordgo.Guild, coll *SoundCollection, sound *Sound) {
+	play := createPlay(user, guild, coll, sound)
+	if play == nil {
+		return
 	}
 
 	// Check if we already have a connection to this guild
@@ -540,6 +550,37 @@ func displayServerStats(cid, sid string) {
 	discord.ChannelMessageSend(cid, fmt.Sprintf("Total Airhorns: %v", totalAirhorns))
 }
 
+func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discordgo.User {
+	for _, mention := range m.Mentions {
+		if mention.ID != s.State.Ready.User.ID {
+			return mention
+		}
+	}
+	return nil
+}
+
+func airhornBomb(cid string, guild *discordgo.Guild, user *discordgo.User, cs string) {
+	count, _ := strconv.Atoi(cs)
+	discord.ChannelMessageSend(cid, ":ok_hand:"+strings.Repeat(":trumpet:", count))
+
+	// Cap it at something
+	if count > 100 {
+		return
+	}
+
+	play := createPlay(user, guild, AIRHORN, nil)
+	vc, err := discord.ChannelVoiceJoin(play.GuildID, play.ChannelID, true, true)
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < count; i++ {
+		AIRHORN.Random().Play(vc)
+	}
+
+	vc.Disconnect()
+}
+
 // Handles bot operator messages, should be refactored (lmao)
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	ourShard := shardContains(g.ID)
@@ -548,20 +589,14 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 		displayBotStats(m.ChannelID)
 	} else if scontains(parts[1], "stats") && ourShard {
 		if len(m.Mentions) >= 2 {
-			var who string
-			for _, mention := range m.Mentions {
-				if mention.ID != s.State.Ready.User.ID {
-					who = mention.ID
-					break
-				}
-			}
-
-			displayUserStats(m.ChannelID, who)
+			displayUserStats(m.ChannelID, utilGetMentioned(s, m).ID)
 		} else if len(parts) >= 3 {
 			displayUserStats(m.ChannelID, parts[2])
 		} else {
 			displayServerStats(m.ChannelID, g.ID)
 		}
+	} else if scontains(parts[1], "bomb") && len(parts) >= 4 {
+		airhornBomb(m.ChannelID, g, utilGetMentioned(s, m), parts[3])
 	} else if scontains(parts[1], "shards") {
 		guilds := 0
 		for _, guild := range s.State.Ready.Guilds {

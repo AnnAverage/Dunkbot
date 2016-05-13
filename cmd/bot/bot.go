@@ -169,12 +169,27 @@ var COW *SoundCollection = &SoundCollection{
 	},
 }
 
+var BIRTHDAY *SoundCollection = &SoundCollection{
+	Prefix: "birthday",
+	Commands: []string{
+		"!birthday",
+		"!bday",
+	},
+	Sounds: []*Sound{
+		createSound("horn", 50, 250),
+		createSound("horn3", 30, 250),
+		createSound("sadhorn", 25, 250),
+		createSound("weakhorn", 25, 250),
+	},
+}
+
 var COLLECTIONS []*SoundCollection = []*SoundCollection{
 	AIRHORN,
 	KHALED,
 	CENA,
 	ETHAN,
 	COW,
+	BIRTHDAY,
 }
 
 // Create a Sound struct

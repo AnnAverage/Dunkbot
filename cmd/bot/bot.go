@@ -662,12 +662,12 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func main() {
 	var (
-		Token     = flag.String("t", "", "Discord Authentication Token")
-		Redis     = flag.String("r", "", "Redis Connection String")
-		Shard     = flag.String("s", "", "Shard ID")
-		NumShards = flag.String("n", "", "Number of shards")
-		Owner     = flag.String("o", "", "Owner ID")
-		err       error
+		Token      = flag.String("t", "", "Discord Authentication Token")
+		Redis      = flag.String("r", "", "Redis Connection String")
+		Shard      = flag.String("s", "", "Shard ID")
+		ShardCount = flag.String("c", "", "Number of shards")
+		Owner      = flag.String("o", "", "Owner ID")
+		err        error
 	)
 	flag.Parse()
 
@@ -707,10 +707,10 @@ func main() {
 
 	// Set sharding info
 	discord.ShardID, _ = strconv.Atoi(*Shard)
-	discord.NumShards, _ = strconv.Atoi(*NumShards)
+	discord.ShardCount, _ = strconv.Atoi(*ShardCount)
 
-	if discord.NumShards <= 0 {
-		discord.NumShards = 1
+	if discord.ShardCount <= 0 {
+		discord.ShardCount = 1
 	}
 
 	discord.AddHandler(onReady)
